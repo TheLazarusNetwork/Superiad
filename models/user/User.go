@@ -4,13 +4,15 @@ import (
 	"log"
 
 	"github.com/TheLazarusNetwork/mtwallet/config/dbconfig"
+	"github.com/TheLazarusNetwork/mtwallet/models/transaction"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/wallet"
 	"github.com/google/uuid"
 )
 
 type User struct {
-	UserId   string `json:"userId" gorm:"primary_key"`
-	Mnemonic string `json:"mnemonic" gorm:"unique;not null"`
+	UserId       string                    `json:"userId" gorm:"primary_key"`
+	Mnemonic     string                    `json:"mnemonic" gorm:"unique;not null"`
+	Transactions []transaction.Transaction `gorm:"foreignKey:UserId"`
 }
 
 var initDone bool = false
@@ -43,6 +45,21 @@ func AddUser() (string, error) {
 	} else {
 		return userId, nil
 	}
+}
+
+func AddTrasactionHash(userId string, hash string) error {
+	db := dbconfig.GetDb()
+	trx := transaction.Transaction{UserId: userId, TrasactionHash: hash}
+	association := db.Model(&User{UserId: userId}).Association("Transactions")
+	err := association.Error
+	if err != nil {
+		return err
+	}
+	err = association.Append(&trx).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func GetMnemonic(userId string) (mnemonic string, err error) {

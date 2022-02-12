@@ -24,7 +24,6 @@ func ApplyRoutes(r *gin.RouterGroup) {
 }
 
 func transfer(c *gin.Context) {
-	logwrapper.Error(c.Request.URL)
 	paramNetwork := c.Param("network")
 	erc20Address := c.Query("erc20Address")
 	erc721Address := c.Query("erc721Address")
@@ -96,6 +95,9 @@ func transfer(c *gin.Context) {
 
 	payload := TransferPayload{
 		TrasactionHash: hash,
+	}
+	if err := user.AddTrasactionHash(req.UserId, hash); err != nil {
+		logwrapper.Errorf("failed to add transaction hash: %v to user id: %v, error: %v", hash, req.UserId, err.Error())
 	}
 	httphelper.SuccessResponse(c, "trasaction initiated", payload)
 }
