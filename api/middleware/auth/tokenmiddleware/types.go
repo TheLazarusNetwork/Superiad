@@ -1,8 +1,5 @@
 package tokenmiddleware
 
 type GenericAuthHeaders struct {
-	Authorization string
-	OrgUid        string
+	Authorization string `binding:"required"`
 }
-
-// TODO : One token
