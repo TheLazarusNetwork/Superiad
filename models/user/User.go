@@ -11,8 +11,8 @@ import (
 
 type User struct {
 	UserId       string                    `json:"userId" gorm:"primary_key"`
-	Mnemonic     string                    `json:"mnemonic" gorm:"unique;not null"`
-	Transactions []transaction.Transaction `gorm:"foreignKey:UserId"`
+	Mnemonic     string                    `json:"-" gorm:"unique;not null"`
+	Transactions []transaction.Transaction `json:"transactions" gorm:"foreignKey:UserId"`
 }
 
 var initDone bool = false
@@ -63,13 +63,21 @@ func AddTrasactionHash(userId string, hash string) error {
 }
 
 func GetMnemonic(userId string) (mnemonic string, err error) {
-	Init()
-	db := dbconfig.GetDb()
-	var user User
-	err = db.Model(&User{}).Where("user_id = ?", userId).First(&user).Error
+	user, err := GetUser(userId)
 	if err != nil {
 		return "", err
 	} else {
 		return user.Mnemonic, nil
+	}
+}
+
+func GetUser(userId string) (user User, err error) {
+	Init()
+	db := dbconfig.GetDb()
+	err = db.Model(&User{}).Where("user_id = ?", userId).First(&user).Error
+	if err != nil {
+		return User{}, err
+	} else {
+		return user, nil
 	}
 }
