@@ -4,7 +4,7 @@
 
 tasks:
   - init: go get && go build ./...
-    command: go run
+    command: ./start.sh && go run
 vscode:
   extensions:
     - golang.go

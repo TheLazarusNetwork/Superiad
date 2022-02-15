@@ -8,6 +8,7 @@ import (
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/httphelper"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
+	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/ethereum"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
 
@@ -87,17 +88,70 @@ func transfer(c *gin.Context) {
 				return
 			}
 		}
+		sendSuccessResponse(c, hash, req.UserId)
+		return
+
+	}
+
+	eInfo, err := ethereum.GetNetworkInfo()
+	if err != nil {
+		httphelper.NewInternalServerError(c, "failed to get network info for network %v", "polygon")
+		return
+	}
+	if eInfo.Name == paramNetwork && eInfo.ChainId.Int64() == req.ChainId {
+		if len(erc20Address) > 0 {
+			hash, err = ethereum.TransferERC20(mnemonic, common.HexToAddress(req.To), common.HexToAddress(erc20Address), *big.NewInt(req.Amount))
+			if err != nil {
+				httphelper.
+					NewInternalServerError(c,
+						"failed to tranfer to: %v from wallet of userId: %v , network: %v, contractAddr: %v , error: %v", req.To,
+						req.UserId, paramNetwork, erc20Address, err.Error())
+				return
+			}
+		} else if len(erc721Address) > 0 {
+			if erc721TokenId == "" {
+				httphelper.BadRequest(c)
+				return
+			}
+			tokenId, err := strconv.Atoi(erc721TokenId)
+			if err != nil {
+				httphelper.BadRequest(c)
+				return
+			}
+			hash, err = ethereum.TransferERC721(mnemonic, common.HexToAddress(req.To), common.HexToAddress(erc721Address), *big.NewInt(int64(tokenId)))
+			if err != nil {
+				httphelper.
+					NewInternalServerError(c,
+						"failed to tranfer to: %v from wallet of userId: %v , network: %v, contractAddr: %v,tokenId %v, error: %v", req.To,
+						req.UserId, paramNetwork, erc721Address, tokenId, err.Error())
+				return
+			}
+		} else {
+			hash, err = ethereum.Transfer(mnemonic, common.HexToAddress(req.To), *big.NewInt(req.Amount))
+			if err != nil {
+				httphelper.
+					NewInternalServerError(c,
+						"failed to tranfer to: %v from wallet of userId: %v and network: %v, error: %v", req.To,
+						req.UserId, paramNetwork, err.Error())
+				return
+			}
+		}
+		sendSuccessResponse(c, hash, req.UserId)
+		return
 
 	} else {
 		httphelper.BadRequest(c)
 		return
 	}
 
+}
+
+func sendSuccessResponse(c *gin.Context, hash string, userId string) {
 	payload := TransferPayload{
 		TrasactionHash: hash,
 	}
-	if err := user.AddTrasactionHash(req.UserId, hash); err != nil {
-		logwrapper.Errorf("failed to add transaction hash: %v to user id: %v, error: %v", hash, req.UserId, err.Error())
+	if err := user.AddTrasactionHash(userId, hash); err != nil {
+		logwrapper.Errorf("failed to add transaction hash: %v to user id: %v, error: %v", hash, userId, err.Error())
 	}
 	httphelper.SuccessResponse(c, "trasaction initiated", payload)
 }
