@@ -26,6 +26,10 @@ func fetchwallet(c *gin.Context) {
 	}
 	var req FetchWalletRequest
 	err := c.BindJSON(&req)
+	if err != nil {
+		httphelper.BadRequest(c)
+		return
+	}
 	mnemonic, err := user.GetMnemonic(paramUserId)
 	if err != nil {
 		httphelper.NewInternalServerError(c, "failed to fetch user mnemonic, error: %v", err.Error())
