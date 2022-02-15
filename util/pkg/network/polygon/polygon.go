@@ -200,3 +200,13 @@ func GetNetworkInfo() (*networkInfo, error) {
 		ChainId: big.NewInt(int64(chainId)),
 	}, nil
 }
+
+func GetWalletAddres(mnemonic string) (string, error) {
+	privKey, err := wallet.GetWallet(mnemonic, GetPath())
+	if err != nil {
+		return "", err
+	}
+	walletAddr := crypto.PubkeyToAddress(privKey.PublicKey)
+
+	return walletAddr.String(), nil
+}
