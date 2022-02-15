@@ -19,6 +19,11 @@ jobs:
       JWT_PRIVATE_KEY: aaaa
       VOTER_EULA: TODO VOTER EULA
       AUTH_EULA: TODO AUTH EULA
+      NETWORK_CHAIN_ID_POLYGON: 80001
+      NETWORK_NAME_POLYGON: polygon
+      NETWORK_PATH_POLYGON: m/44H/60H/0H/0/0
+      NETWORK_RPC_URL_POLYGON: ${{ secrets.NETWORK_RPC_URL_POLYGON }}
+      TOKEN: aa
 
     services:
       postgres:
