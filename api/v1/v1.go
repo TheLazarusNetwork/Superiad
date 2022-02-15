@@ -1,6 +1,8 @@
 package apiv1
 
 import (
+	"github.com/TheLazarusNetwork/mtwallet/api/v1/checkbalance"
+	"github.com/TheLazarusNetwork/mtwallet/api/v1/fetchwallet"
 	"github.com/TheLazarusNetwork/mtwallet/api/v1/register"
 	"github.com/TheLazarusNetwork/mtwallet/api/v1/transfer"
 
@@ -13,5 +15,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	{
 		register.ApplyRoutes(v1)
 		transfer.ApplyRoutes(v1)
+		checkbalance.ApplyRoutes(v1)
+		fetchwallet.ApplyRoutes(v1)
 	}
 }
