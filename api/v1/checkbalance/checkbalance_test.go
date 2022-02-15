@@ -48,7 +48,6 @@ func Test_CheckBalance(t *testing.T) {
 		c.Request = httpReq
 		c.Params = gin.Params{{Key: "network", Value: "polygon"}}
 		checkBalance(c)
-		t.Fatal(rr.Body.String())
 		assert.Equal(t, 200, rr.Result().StatusCode)
 	})
 	t.Run("Fetch user balance for ERC20", func(t *testing.T) {
@@ -71,7 +70,6 @@ func Test_CheckBalance(t *testing.T) {
 		c.Request = httpReq
 		c.Params = gin.Params{{Key: "network", Value: "polygon"}}
 		checkBalance(c)
-		t.Fatal(rr.Body.String())
 		assert.Equal(t, 200, rr.Result().StatusCode)
 	})
 }
