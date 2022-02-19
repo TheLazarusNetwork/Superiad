@@ -30,6 +30,7 @@ func checkBalance(c *gin.Context) {
 	}
 	paramNetwork := c.Param("network")
 	erc20address := c.Query("erc20address")
+	erc721address := c.Query("erc721address")
 
 	mnemonic, err := user.GetMnemonic(req.UserId)
 	if err != nil {
@@ -52,6 +53,15 @@ func checkBalance(c *gin.Context) {
 						paramNetwork, erc20address, err.Error())
 				return
 			}
+		} else if len(erc721address) > 0 {
+			balance, err = polygon.GetERC721Balance(mnemonic, common.HexToAddress(erc721address))
+			if err != nil {
+				httphelper.
+					NewInternalServerError(c,
+						"failed to get ERC721 balance of wallet of userId: %v , network: %v, contractAddr: %v , error: %v", req.UserId,
+						paramNetwork, erc721address, err.Error())
+				return
+			}
 		} else {
 			balance, err = polygon.GetBalance(mnemonic)
 			if err != nil {
@@ -67,4 +77,6 @@ func checkBalance(c *gin.Context) {
 		})
 		return
 	}
+
+	httphelper.BadRequest(c)
 }

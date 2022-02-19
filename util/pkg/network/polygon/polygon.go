@@ -75,6 +75,54 @@ func GetERC20Balance(mnemonic string, contractAddr common.Address) (*big.Int, er
 	}
 }
 
+func GetERC721Balance(mnemonic string, contractAddr common.Address) (*big.Int, error) {
+	privKey, err := wallet.GetWallet(mnemonic, GetPath())
+	if err != nil {
+		return nil, err
+	}
+	publicKey := privKey.PublicKey
+
+	client, err := ethclient.Dial(GetRpcUrl())
+	if err != nil {
+		return nil, err
+	}
+	ins, err := generc721.NewErc721(contractAddr, client)
+	if err != nil {
+		return nil, err
+	}
+	bal, err := ins.BalanceOf(nil, crypto.PubkeyToAddress(publicKey))
+	if err != nil {
+		return nil, err
+	} else {
+		return bal, nil
+	}
+}
+
+func ERC721IsOwner(mnemonic string, contractAddr common.Address, tokenId *big.Int) (bool, error) {
+	privKey, err := wallet.GetWallet(mnemonic, GetPath())
+	if err != nil {
+		return false, err
+	}
+	publicKey := privKey.PublicKey
+	client, err := ethclient.Dial(GetRpcUrl())
+	if err != nil {
+		return false, err
+	}
+
+	ins, err := generc721.NewErc721(contractAddr, client)
+	if err != nil {
+		return false, err
+	}
+	ownerAddr, err := ins.OwnerOf(nil, tokenId)
+	if err != nil {
+		return false, err
+	} else if ownerAddr.String() == crypto.PubkeyToAddress(publicKey).String() {
+		return true, nil
+	} else {
+		return false, nil
+	}
+}
+
 func Transfer(mnemonic string, to common.Address, value big.Int) (string, error) {
 	privKey, err := wallet.GetWallet(mnemonic, GetPath())
 	if err != nil {

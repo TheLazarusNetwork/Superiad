@@ -1,4 +1,4 @@
-package checkbalance
+package isowner
 
 import (
 	"bytes"
@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_CheckBalance(t *testing.T) {
+func Test_IsOwner(t *testing.T) {
 	config.Init("../../../.env")
 	models.Migrate()
 	gin.SetMode(gin.TestMode)
@@ -28,70 +28,55 @@ func Test_CheckBalance(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Run("Fetch user balance", func(t *testing.T) {
+
+	t.Run("Should return true for owned token", func(t *testing.T) {
 		rr := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(rr)
 
-		req := CheckBalanceRequest{
+		req := IsOwnerRequest{
 			UserId:  "62",
 			ChainId: 80001,
+			TokenId: 27,
 		}
 		body, err := json.Marshal(req)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		httpReq, err := http.NewRequest("POST", "/", bytes.NewBuffer(body))
+		httpReq, err := http.NewRequest("POST", "/?erc721Address=0x975362c36b6842d48d02DBD3A077745Fc1C64175", bytes.NewBuffer(body))
 		if err != nil {
 			t.Fatal(err)
 		}
 		c.Request = httpReq
 		c.Params = gin.Params{{Key: "network", Value: "polygon"}}
-		checkBalance(c)
+		isowner(c)
 		assert.Equal(t, 200, rr.Result().StatusCode)
+		assert.Contains(t, rr.Body.String(), "true")
 	})
-	t.Run("Fetch user balance for ERC20", func(t *testing.T) {
+
+	t.Run("Should return false for token which is not owned", func(t *testing.T) {
 		rr := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(rr)
 
-		req := CheckBalanceRequest{
+		req := IsOwnerRequest{
 			UserId:  "62",
 			ChainId: 80001,
+			TokenId: 4,
 		}
 		body, err := json.Marshal(req)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		httpReq, err := http.NewRequest("POST", "/?erc20address=0x2d7882bedcbfddce29ba99965dd3cdf7fcb10a1e", bytes.NewBuffer(body))
+		httpReq, err := http.NewRequest("POST", "/?erc721Address=0x975362c36b6842d48d02DBD3A077745Fc1C64175", bytes.NewBuffer(body))
 		if err != nil {
 			t.Fatal(err)
 		}
 		c.Request = httpReq
 		c.Params = gin.Params{{Key: "network", Value: "polygon"}}
-		checkBalance(c)
+		isowner(c)
 		assert.Equal(t, 200, rr.Result().StatusCode)
+		assert.Contains(t, rr.Body.String(), "false")
 	})
-	t.Run("Fetch user balance for ERC721", func(t *testing.T) {
-		rr := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(rr)
 
-		req := CheckBalanceRequest{
-			UserId:  "62",
-			ChainId: 80001,
-		}
-		body, err := json.Marshal(req)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		httpReq, err := http.NewRequest("POST", "/?erc721address=0x975362c36b6842d48d02DBD3A077745Fc1C64175", bytes.NewBuffer(body))
-		if err != nil {
-			t.Fatal(err)
-		}
-		c.Request = httpReq
-		c.Params = gin.Params{{Key: "network", Value: "polygon"}}
-		checkBalance(c)
-		assert.Equal(t, 200, rr.Result().StatusCode)
-	})
 }
