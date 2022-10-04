@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/TheLazarusNetwork/mtwallet/config"
 	"github.com/TheLazarusNetwork/mtwallet/config/dbconfig"
+	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
 	"github.com/TheLazarusNetwork/mtwallet/models"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
 	"github.com/TheLazarusNetwork/mtwallet/util/testingcommon"
@@ -17,7 +17,7 @@ import (
 )
 
 func Test_IsOwner(t *testing.T) {
-	config.Init("../../../.env")
+	envconfig.InitEnvVars()
 	models.Migrate()
 	gin.SetMode(gin.TestMode)
 	t.Cleanup(testingcommon.DeleteCreatedEntities())
@@ -48,7 +48,6 @@ func Test_IsOwner(t *testing.T) {
 			t.Fatal(err)
 		}
 		c.Request = httpReq
-		c.Params = gin.Params{{Key: "network", Value: "polygon"}}
 		isowner(c)
 		assert.Equal(t, 200, rr.Result().StatusCode)
 		assert.Contains(t, rr.Body.String(), "true")
@@ -73,7 +72,6 @@ func Test_IsOwner(t *testing.T) {
 			t.Fatal(err)
 		}
 		c.Request = httpReq
-		c.Params = gin.Params{{Key: "network", Value: "polygon"}}
 		isowner(c)
 		assert.Equal(t, 200, rr.Result().StatusCode)
 		assert.Contains(t, rr.Body.String(), "false")

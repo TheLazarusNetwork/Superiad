@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/TheLazarusNetwork/mtwallet/config"
 	"github.com/TheLazarusNetwork/mtwallet/config/dbconfig"
+	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
 	"github.com/TheLazarusNetwork/mtwallet/models"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
 	"github.com/TheLazarusNetwork/mtwallet/util/testingcommon"
@@ -17,7 +17,7 @@ import (
 )
 
 func Test_FetchWallet(t *testing.T) {
-	config.Init("../../../.env")
+	envconfig.InitEnvVars()
 	models.Migrate()
 	gin.SetMode(gin.TestMode)
 	t.Cleanup(testingcommon.DeleteCreatedEntities())
@@ -40,7 +40,6 @@ func Test_FetchWallet(t *testing.T) {
 		t.Fatal(e)
 	}
 	c, _ := gin.CreateTestContext(rr)
-	c.Params = gin.Params{{Key: "userId", Value: "67"}}
 	httpReq, e := http.NewRequest("GET", "/", bytes.NewBuffer(d))
 	if e != nil {
 		t.Fatal(e)

@@ -36,24 +36,13 @@ func fetchwallet(c *gin.Context) {
 		return
 	}
 
-	pInfo, err := polygon.GetNetworkInfo()
+	walletAddr, err := polygon.GetWalletAddres(mnemonic)
 	if err != nil {
-		httphelper.NewInternalServerError(c, "failed to get network info for network %v", "polygon")
+		httphelper.NewInternalServerError(c, "failed to get wallet address for userId: %v", paramUserId)
 		return
 	}
-
-	if pInfo.Name == req.Network && pInfo.ChainId.Int64() == req.ChainId {
-		walletAddr, err := polygon.GetWalletAddres(mnemonic)
-		if err != nil {
-			httphelper.NewInternalServerError(c, "failed to get wallet address for userId: %v", paramUserId)
-			return
-		}
-		httphelper.SuccessResponse(c, "wallet address fetched", FetchWalletPayload{
-			WalletAddress: walletAddr,
-		})
-	} else {
-		httphelper.BadRequest(c)
-		return
-	}
+	httphelper.SuccessResponse(c, "wallet address fetched", FetchWalletPayload{
+		WalletAddress: walletAddr,
+	})
 
 }

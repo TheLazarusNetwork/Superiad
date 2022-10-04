@@ -3,11 +3,10 @@ package ethereum
 import (
 	"context"
 	"math/big"
-	"strconv"
 
+	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
 	"github.com/TheLazarusNetwork/mtwallet/generated/generc20"
 	"github.com/TheLazarusNetwork/mtwallet/generated/generc721"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/envutil"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/wallet"
 	rawtrasaction "github.com/TheLazarusNetwork/mtwallet/util/pkg/wallet/rawtransaction"
@@ -20,19 +19,15 @@ import (
 )
 
 func GetChainId() (int, error) {
-	chainId, err := strconv.Atoi(envutil.MustGetEnv("NETWORK_CHAIN_ID_ETHEREUM"))
-	if err != nil {
-		return 0, err
-	}
-	return chainId, nil
+	return 1, nil
 }
 
 func GetPath() string {
-	return envutil.MustGetEnv("NETWORK_PATH_ETHEREUM")
+	return "m/44H/60H/0H/0/0"
 }
 
 func GetRpcUrl() string {
-	return envutil.MustGetEnv("NETWORK_RPC_URL_ETHEREUM")
+	return envconfig.EnvVars.NETWORK_RPC_URL_ETHEREUM
 }
 
 func GetBalance(mnemonic string) (*big.Int, error) {
@@ -196,7 +191,7 @@ func GetNetworkInfo() (*networkInfo, error) {
 		return nil, err
 	}
 	return &networkInfo{
-		Name:    envutil.MustGetEnv("NETWORK_NAME_ETHEREUM"),
+		Name:    "ethereum",
 		ChainId: big.NewInt(int64(chainId)),
 	}, nil
 }

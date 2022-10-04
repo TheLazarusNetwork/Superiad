@@ -3,9 +3,8 @@ package dbconfig
 import (
 	"fmt"
 
+	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/envutil"
 
 	"github.com/jinzhu/gorm"
 
@@ -20,14 +19,14 @@ func GetDb() *gorm.DB {
 		return db
 	}
 	var (
-		host     = envutil.MustGetEnv("DB_HOST")
-		username = envutil.MustGetEnv("DB_USERNAME")
-		password = envutil.MustGetEnv("DB_PASSWORD")
-		dbname   = envutil.MustGetEnv("DB_NAME")
-		port     = envutil.MustGetEnv("DB_PORT")
+		host     = envconfig.EnvVars.DB_HOST
+		username = envconfig.EnvVars.DB_USERNAME
+		password = envconfig.EnvVars.DB_PASSWORD
+		dbname   = envconfig.EnvVars.DB_NAME
+		port     = envconfig.EnvVars.DB_PORT
 	)
 
-	psqlInfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable port=%s",
+	psqlInfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable port=%d",
 		host, username, password, dbname, port)
 	var err error
 	db, err = gorm.Open("postgres", psqlInfo)

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/envutil"
+	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/httphelper"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
 
@@ -32,7 +32,7 @@ func ApiAuth(c *gin.Context) {
 		return
 	}
 
-	if token != envutil.MustGetEnv("TOKEN") {
+	if token != envconfig.EnvVars.TOKEN {
 		logValidationFailed(token, err)
 		httphelper.ErrResponse(c, http.StatusForbidden, "token is invalid")
 		c.Abort()

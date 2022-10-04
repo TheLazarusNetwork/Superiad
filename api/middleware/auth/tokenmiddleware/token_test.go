@@ -5,16 +5,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/TheLazarusNetwork/mtwallet/config"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/envutil"
+	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_APIAUTH(t *testing.T) {
-	config.Init("../../../../.env")
+	envconfig.InitEnvVars()
 
-	correctToken := envutil.MustGetEnv("TOKEN")
+	correctToken := envconfig.EnvVars.TOKEN
 	t.Run("success if token is valid", func(t *testing.T) {
 		rr := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(rr)
