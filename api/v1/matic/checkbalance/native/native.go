@@ -47,6 +47,4 @@ func nativeCheckBalance(c *gin.Context) {
 	httphelper.SuccessResponse(c, "balance successfully fetched", CheckNativeBalancePayload{
 		Balance: balance.String(),
 	})
-	return
-
 }

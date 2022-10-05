@@ -51,8 +51,6 @@ func approve(c *gin.Context) {
 	}
 
 	sendSuccessResponse(c, hash, req.UserId)
-	return
-
 }
 
 func sendSuccessResponse(c *gin.Context, hash string, userId string) {

@@ -48,6 +48,4 @@ func erc721CheckBalance(c *gin.Context) {
 	httphelper.SuccessResponse(c, "balance successfully fetched", CheckErc721BalancePayload{
 		Balance: balance.String(),
 	})
-	return
-
 }

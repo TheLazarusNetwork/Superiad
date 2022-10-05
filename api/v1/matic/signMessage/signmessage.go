@@ -44,7 +44,6 @@ func signMessage(c *gin.Context) {
 	}
 
 	sendSuccessResponse(c, signature, req.UserId)
-	return
 
 }
 
