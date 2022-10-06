@@ -37,7 +37,7 @@ func erc20CheckBalance(c *gin.Context) {
 	mnemonic, err := user.GetMnemonic(req.UserId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").SendD(c)
+			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
 			return
 		}
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
