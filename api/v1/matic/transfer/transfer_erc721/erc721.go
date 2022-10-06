@@ -18,7 +18,7 @@ import (
 
 // ApplyRoutes applies router to gin Router
 func ApplyRoutes(r *gin.RouterGroup) {
-	g := r.Group("/transfer")
+	g := r.Group("/erc721")
 	{
 		g.Use(tokenmiddleware.ApiAuth)
 		g.POST("", transfer)
