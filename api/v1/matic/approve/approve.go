@@ -16,8 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//TODO check req methods
-
 // ApplyRoutes applies router to gin Router
 func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/approve")
