@@ -1,9 +1,12 @@
 package register
 
 import (
+	"net/http"
+
+	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/httphelper"
+	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,18 +16,20 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/register")
 	{
 		g.Use(tokenmiddleware.ApiAuth)
-		g.GET("/", register)
+		g.GET("", register)
 	}
 }
 
 func register(c *gin.Context) {
 	uid, err := user.AddUser()
 	if err != nil {
-		httphelper.NewInternalServerError(c, "failed to add user, error: %v", err.Error())
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to add user").SendD(c)
+		logwrapper.Errorf("failed to add user, error: %s", err)
+
 	} else {
 		payload := RegisterPayload{
 			Uid: uid,
 		}
-		httphelper.SuccessResponse(c, "user registration successfull", payload)
+		httpo.NewSuccessResponse(200, "user registration successfull", payload).SendD(c)
 	}
 }

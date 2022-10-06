@@ -22,7 +22,7 @@ func Init() {
 		return
 	}
 	db := dbconfig.GetDb()
-	if err := db.AutoMigrate(&User{}).Error; err != nil {
+	if err := db.AutoMigrate(&User{}); err != nil {
 		log.Fatal(err)
 	}
 	initDone = true
@@ -55,7 +55,7 @@ func AddTrasactionHash(userId string, hash string) error {
 	if err != nil {
 		return err
 	}
-	err = association.Append(&trx).Error
+	err = association.Append(&trx)
 	if err != nil {
 		return err
 	}

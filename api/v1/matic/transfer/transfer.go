@@ -1,15 +1,18 @@
 package transfer
 
 import (
+	"errors"
 	"math/big"
+	"net/http"
 	"strconv"
 
+	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/httphelper"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,7 +22,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/transfer")
 	{
 		g.Use(tokenmiddleware.ApiAuth)
-		g.GET("/", transfer)
+		g.GET("", transfer)
 	}
 }
 
@@ -31,15 +34,20 @@ func transfer(c *gin.Context) {
 	var req TransferRequest
 	if err := c.BindJSON(&req); err != nil {
 		logwrapper.Errorf("invalid request %v", err.Error())
-		httphelper.BadRequest(c)
+		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 		return
 	}
 	mnemonic, err := user.GetMnemonic(req.UserId)
 	if err != nil {
-		httphelper.
-			NewInternalServerError(c,
-				"failed to fetch user mnemonic for userId: %v, error: %v",
-				req.UserId, err.Error())
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+
+			return
+		}
+
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
+		logwrapper.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
+			req.UserId, err)
 		return
 	}
 
@@ -47,38 +55,39 @@ func transfer(c *gin.Context) {
 	if len(erc20Address) > 0 {
 		hash, err = polygon.TransferERC20(mnemonic, common.HexToAddress(req.To), common.HexToAddress(erc20Address), *big.NewInt(req.Amount))
 		if err != nil {
-			httphelper.
-				NewInternalServerError(c,
-					"failed to tranfer to: %v from wallet of userId: %v , network: %v, contractAddr: %v , error: %v", req.To,
-					req.UserId, network, erc20Address, err.Error())
+			httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
+			logwrapper.Errorf("failed to tranfer to: %v from wallet of userId: %v , network: %v, contractAddr: %v , error: %s", req.To,
+				req.UserId, network, erc20Address, err)
 			return
 		}
 	} else if len(erc721Address) > 0 {
 		if erc721TokenId == "" {
-			httphelper.BadRequest(c)
+			httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
+
 			return
 		}
 		tokenId, err := strconv.Atoi(erc721TokenId)
 		if err != nil {
-			httphelper.BadRequest(c)
+			httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
+
 			return
 		}
 		hash, err = polygon.TransferERC721(mnemonic, common.HexToAddress(req.To), common.HexToAddress(erc721Address), *big.NewInt(int64(tokenId)))
 		if err != nil {
-			httphelper.
-				NewInternalServerError(c,
-					"failed to tranfer to: %v from wallet of userId: %v , network: %v, contractAddr: %v,tokenId %v, error: %v", req.To,
-					req.UserId, network, erc721Address, tokenId, err.Error())
+
+			httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
+			logwrapper.Errorf("failed to tranfer to: %v from wallet of userId: %v , network: %v, contractAddr: %v,tokenId %v, error: %s", req.To,
+				req.UserId, network, erc721Address, tokenId, err)
 			return
 		}
 	} else {
 		hash, err = polygon.Transfer(mnemonic, common.HexToAddress(req.To), *big.NewInt(req.Amount))
 		if err != nil {
-			httphelper.
-				NewInternalServerError(c,
-					"failed to tranfer to: %v from wallet of userId: %v and network: %v, error: %v", req.To,
-					req.UserId, network, err.Error())
+			httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
+			logwrapper.Errorf("failed to tranfer to: %v from wallet of userId: %v and network: %v, error: %s", req.To,
+				req.UserId, network, err)
 			return
+
 		}
 	}
 	sendSuccessResponse(c, hash, req.UserId)
@@ -91,5 +100,5 @@ func sendSuccessResponse(c *gin.Context, hash string, userId string) {
 	if err := user.AddTrasactionHash(userId, hash); err != nil {
 		logwrapper.Errorf("failed to add transaction hash: %v to user id: %v, error: %v", hash, userId, err.Error())
 	}
-	httphelper.SuccessResponse(c, "trasaction initiated", payload)
+	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
 }

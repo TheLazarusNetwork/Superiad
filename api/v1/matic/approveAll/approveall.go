@@ -1,12 +1,16 @@
 package approveall
 
 import (
+	"errors"
+	"net/http"
+
+	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/httphelper"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +20,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/approveAll")
 	{
 		g.Use(tokenmiddleware.ApiAuth)
-		g.GET("/", approveAll)
+		g.GET("", approveAll)
 	}
 }
 
@@ -25,15 +29,19 @@ func approveAll(c *gin.Context) {
 	var req ApproveAllRequest
 	if err := c.BindJSON(&req); err != nil {
 		logwrapper.Errorf("invalid request %v", err.Error())
-		httphelper.BadRequest(c)
+		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
+
 		return
 	}
 	mnemonic, err := user.GetMnemonic(req.UserId)
 	if err != nil {
-		httphelper.
-			NewInternalServerError(c,
-				"failed to fetch user mnemonic for userId: %v, error: %v",
-				req.UserId, err.Error())
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+			return
+		}
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
+		logwrapper.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
+			req.UserId, err)
 		return
 	}
 
@@ -41,10 +49,10 @@ func approveAll(c *gin.Context) {
 
 	hash, err = polygon.SetAprovalForAllErc721(mnemonic, common.HexToAddress(req.OperatorAddress), common.HexToAddress(req.ContractAddress), req.Approved)
 	if err != nil {
-		httphelper.
-			NewInternalServerError(c,
-				"failed to approve all to operator: %v from wallet of userId: %v, network: %v, contractAddr: %v, error: %v", req.OperatorAddress,
-				req.UserId, network, req.ContractAddress, err.Error())
+
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to approve all").SendD(c)
+		logwrapper.Errorf("failed to approve all to operator: %v from wallet of userId: %v, network: %v, contractAddr: %v, error: %s", req.OperatorAddress,
+			req.UserId, network, req.ContractAddress, err)
 		return
 	}
 
@@ -58,5 +66,5 @@ func sendSuccessResponse(c *gin.Context, hash string, userId string) {
 	if err := user.AddTrasactionHash(userId, hash); err != nil {
 		logwrapper.Errorf("failed to add transaction hash: %v to user id: %v, error: %v", hash, userId, err.Error())
 	}
-	httphelper.SuccessResponse(c, "trasaction initiated", payload)
+	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
 }

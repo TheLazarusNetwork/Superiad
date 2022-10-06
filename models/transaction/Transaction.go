@@ -14,11 +14,12 @@ type Transaction struct {
 var initDone bool = false
 
 func Init() {
+	//TODO: better transaction handling
 	if initDone {
 		return
 	}
 	db := dbconfig.GetDb()
-	if err := db.AutoMigrate(&Transaction{}).Error; err != nil {
+	if err := db.AutoMigrate(&Transaction{}); err != nil {
 		log.Fatal(err)
 	}
 	initDone = true

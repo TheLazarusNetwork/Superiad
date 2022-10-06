@@ -2,6 +2,7 @@ package polygon
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 
 	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
@@ -30,11 +31,12 @@ func GetBalance(mnemonic string) (*big.Int, error) {
 	publicKey := privKey.PublicKey
 	client, err := ethclient.Dial(GetRpcUrl())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to dial rpc client :%w", err)
 	}
+	fmt.Printf("GetRpcUrl(): %v\n", GetRpcUrl())
 	bal, err := client.BalanceAt(context.Background(), crypto.PubkeyToAddress(publicKey), nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to call BalanceAt :%w", err)
 	}
 	return bal, nil
 }

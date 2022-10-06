@@ -6,9 +6,9 @@ import (
 	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"gorm.io/driver/postgres"
 )
 
 var db *gorm.DB
@@ -26,15 +26,22 @@ func GetDb() *gorm.DB {
 		port     = envconfig.EnvVars.DB_PORT
 	)
 
-	psqlInfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable port=%d",
+	dns := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable port=%d",
 		host, username, password, dbname, port)
+
 	var err error
-	db, err = gorm.Open("postgres", psqlInfo)
+	db, err = gorm.Open(postgres.New(postgres.Config{
+		DSN: dns,
+	}))
 	if err != nil {
 		log.Fatal("failed to connect database", err)
 	}
 
-	if err = db.DB().Ping(); err != nil {
+	sqlDb, err := db.DB()
+	if err != nil {
+		log.Fatal("failed to ping database", err)
+	}
+	if err = sqlDb.Ping(); err != nil {
 		log.Fatal("failed to ping database", err)
 	}
 	return db
