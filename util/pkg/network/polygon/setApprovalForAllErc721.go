@@ -22,7 +22,7 @@ func SetAprovalForAllErc721(mnemonic string, operatorAddr common.Address, contra
 	if err != nil {
 		return "", err
 	}
-	tx, err := rawtrasaction.SendRawTrasac(privKey, *client, int64(chainId), 310000, contractAddr, generc721.Erc721MetaData.ABI, "approve", operatorAddr, approved)
+	tx, err := rawtrasaction.SendRawTrasac(privKey, *client, int64(chainId), 310000, contractAddr, generc721.Erc721MetaData.ABI, "setApprovalForAll", operatorAddr, &approved)
 	if err != nil {
 		return "", err
 	}
