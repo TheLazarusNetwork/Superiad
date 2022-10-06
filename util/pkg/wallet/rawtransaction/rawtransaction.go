@@ -20,7 +20,7 @@ func SendRawTrasac(privateKey *ecdsa.PrivateKey, client ethclient.Client, chainI
 
 	abiP, err := abi.JSON(strings.NewReader(abiS))
 	if err != nil {
-		logwrapper.Errorf("failed to parse JSON abi, error %v", err)
+		logwrapper.Errorf("failed to parse JSON abi, error %s", err)
 		return nil, err
 	}
 
@@ -32,19 +32,19 @@ func SendRawTrasac(privateKey *ecdsa.PrivateKey, client ethclient.Client, chainI
 
 	chainID, err := client.NetworkID(context.Background())
 	if err != nil {
-		logwrapper.Errorf("failed to call client.NetworkID, error: %v", err.Error())
+		logwrapper.Errorf("failed to call client.NetworkID, error: %s", err)
 		return nil, err
 	}
 
 	bytesData, err := abiP.Pack(method, args...)
 	if err != nil {
-		logwrapper.Errorf("failed to pack trasaction of method %v, error: %v", method, err)
+		logwrapper.Errorf("failed to pack trasaction of method %v, error: %s", method, err)
 		return nil, err
 	}
 
 	maxPriorityFeePerGas, err := client.SuggestGasTipCap(context.Background())
 	if err != nil {
-		logwrapper.Errorf("failed to suggestGasTipCap, error %v", err)
+		logwrapper.Errorf("failed to suggestGasTipCap, error %s", err)
 		return nil, err
 	}
 	config := &params.ChainConfig{
@@ -69,7 +69,7 @@ func SendRawTrasac(privateKey *ecdsa.PrivateKey, client ethclient.Client, chainI
 	})
 	signedTx, err := types.SignTx(tx, types.NewLondonSigner(chainID), privateKey)
 	if err != nil {
-		logwrapper.Errorf("failed to sign trasaction %v, error: %v", tx, err.Error())
+		logwrapper.Errorf("failed to sign trasaction %v, error: %s", tx, err)
 		return nil, err
 	}
 

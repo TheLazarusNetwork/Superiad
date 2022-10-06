@@ -33,7 +33,6 @@ func GetBalance(mnemonic string) (*big.Int, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to dial rpc client :%w", err)
 	}
-	fmt.Printf("GetRpcUrl(): %v\n", GetRpcUrl())
 	bal, err := client.BalanceAt(context.Background(), crypto.PubkeyToAddress(publicKey), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call BalanceAt :%w", err)

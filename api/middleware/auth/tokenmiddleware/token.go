@@ -41,5 +41,5 @@ func ApiAuth(c *gin.Context) {
 }
 
 func logValidationFailed(token string, err error) {
-	logwrapper.Warnf("validation failed with token %v, error: %v", token, err)
+	logwrapper.Warnf("validation failed with token %v, error: %s", token, err)
 }

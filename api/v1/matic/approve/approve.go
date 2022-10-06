@@ -16,12 +16,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//TODO check req methods
+
 // ApplyRoutes applies router to gin Router
 func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/approve")
 	{
 		g.Use(tokenmiddleware.ApiAuth)
-		g.GET("", approve)
+		g.POST("", approve)
 	}
 }
 
@@ -29,7 +31,7 @@ func approve(c *gin.Context) {
 	network := "matic"
 	var req ApproveRequest
 	if err := c.BindJSON(&req); err != nil {
-		logwrapper.Errorf("invalid request %v", err.Error())
+		logwrapper.Errorf("invalid request %s", err)
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 		return
 	}
@@ -51,7 +53,7 @@ func approve(c *gin.Context) {
 	hash, err = polygon.ApproveERC721(mnemonic, common.HexToAddress(req.ToAddress), common.HexToAddress(req.ContractAddress), *big.NewInt(req.TokenId))
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to approve").SendD(c)
-		logwrapper.Errorf("failed to approve to: %v from wallet of userId: %v, network: %v, contractAddr: %v, tokenId: %v, error: %d", req.ToAddress,
+		logwrapper.Errorf("failed to approve to: %v from wallet of userId: %v, network: %v, contractAddr: %v, tokenId: %v, error: %", req.ToAddress,
 			req.UserId, network, req.ContractAddress, req.TokenId, err)
 		return
 	}
@@ -64,7 +66,7 @@ func sendSuccessResponse(c *gin.Context, hash string, userId string) {
 		TrasactionHash: hash,
 	}
 	if err := user.AddTrasactionHash(userId, hash); err != nil {
-		logwrapper.Errorf("failed to add transaction hash: %v to user id: %v, error: %v", hash, userId, err.Error())
+		logwrapper.Errorf("failed to add transaction hash: %v to user id: %v, error: %s", hash, userId, err)
 	}
 	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
 }

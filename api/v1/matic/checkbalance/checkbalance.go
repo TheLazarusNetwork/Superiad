@@ -2,9 +2,9 @@ package checkbalance
 
 import (
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/checkbalance/erc20"
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/checkbalance/erc721"
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/checkbalance/native"
+	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/checkbalance/checkbalance_erc20"
+	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/checkbalance/checkbalance_erc721"
+	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/checkbalance/checkbalance_native"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,8 +14,8 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/checkbalance")
 	{
 		g.Use(tokenmiddleware.ApiAuth)
-		erc20.ApplyRoutes(g)
-		erc721.ApplyRoutes(g)
-		native.ApplyRoutes(g)
+		checkbalance_erc20.ApplyRoutes(g)
+		checkbalance_erc721.ApplyRoutes(g)
+		checkbalance_native.ApplyRoutes(g)
 	}
 }

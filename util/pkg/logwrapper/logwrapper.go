@@ -14,7 +14,7 @@ func Init() {
 		"hostname": hostname,
 	})
 	if err != nil {
-		Log.Warnf("Error in getting hostname: %v", err)
+		Log.Warnf("Error in getting hostname: %s", err)
 	}
 	Log.Logger.SetFormatter(&logrus.JSONFormatter{})
 

@@ -19,14 +19,14 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/sign-message")
 	{
 		g.Use(tokenmiddleware.ApiAuth)
-		g.GET("", signMessage)
+		g.POST("", signMessage)
 	}
 }
 
 func signMessage(c *gin.Context) {
 	var req SignMessageRequest
 	if err := c.BindJSON(&req); err != nil {
-		logwrapper.Errorf("invalid request %v", err.Error())
+		logwrapper.Errorf("invalid request %s", err)
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 
 		return

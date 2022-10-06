@@ -1,4 +1,4 @@
-package erc721
+package checkbalance_erc721
 
 import (
 	"errors"
@@ -55,7 +55,9 @@ func erc721CheckBalance(c *gin.Context) {
 			network, req.ContractAddr, err)
 		return
 	}
-	httpo.NewSuccessResponse(200, "balance successfully fetched", CheckErc721BalancePayload{
+
+	payload := CheckErc721BalancePayload{
 		Balance: balance.String(),
-	})
+	}
+	httpo.NewSuccessResponse(200, "balance successfully fetched", payload).SendD(c)
 }

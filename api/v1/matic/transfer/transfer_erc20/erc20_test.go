@@ -1,9 +1,8 @@
-package transfer
+package transfer_erc20
 
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -48,78 +47,22 @@ func Test_Transfer(t *testing.T) {
 		},
 	}
 
-	t.Run("Native token", func(t *testing.T) {
-		for _, n := range networks {
-			rr := httptest.NewRecorder()
-
-			req := TransferRequest{
-				UserId:  "60",
-				To:      "0x876FA09c042E6CA0c2f73AAe1DD7Bf712b6BF8f0",
-				Amount:  1,
-				ChainId: n.chainId,
-			}
-			d, e := json.Marshal(req)
-			if e != nil {
-				t.Fatal(e)
-			}
-			c, _ := gin.CreateTestContext(rr)
-			httpReq, e := http.NewRequest("GET", "/", bytes.NewBuffer(d))
-			if e != nil {
-				t.Fatal(e)
-			}
-			c.Request = httpReq
-			transfer(c)
-
-			assert.Equal(t, 200, rr.Result().StatusCode)
-		}
-
-	})
-
 	t.Run("ERC20 Token", func(t *testing.T) {
 		for _, n := range networks {
 			rr := httptest.NewRecorder()
 
 			req := TransferRequest{
-				UserId:  "60",
-				To:      "0x876FA09c042E6CA0c2f73AAe1DD7Bf712b6BF8f0",
-				Amount:  1,
-				ChainId: n.chainId,
+				UserId:          "60",
+				To:              "0x876FA09c042E6CA0c2f73AAe1DD7Bf712b6BF8f0",
+				Amount:          1,
+				ContractAddress: n.erc20Address,
 			}
 			d, e := json.Marshal(req)
 			if e != nil {
 				t.Fatal(e)
 			}
 			c, _ := gin.CreateTestContext(rr)
-			reqUrl := fmt.Sprintf("/?erc20Address=%v", n.erc20Address)
-			httpReq, e := http.NewRequest("GET", reqUrl, bytes.NewBuffer(d))
-			if e != nil {
-				t.Fatal(e)
-			}
-			c.Request = httpReq
-			transfer(c)
-			assert.Equal(t, 200, rr.Result().StatusCode)
-		}
-
-	})
-	t.Run("ERC721 Token", func(t *testing.T) {
-		for _, n := range networks {
-			rr := httptest.NewRecorder()
-
-			req := TransferRequest{
-				UserId:  "60",
-				To:      "0x876FA09c042E6CA0c2f73AAe1DD7Bf712b6BF8f0",
-				Amount:  1,
-				ChainId: n.chainId,
-			}
-			d, e := json.Marshal(req)
-			if e != nil {
-				t.Fatal(e)
-			}
-			c, _ := gin.CreateTestContext(rr)
-			reqUrl := fmt.Sprintf("/?erc721Address=%v", n.erc721Address)
-			httpReq, e := http.
-				NewRequest("GET", reqUrl,
-					bytes.NewBuffer(d))
+			httpReq, e := http.NewRequest("GET", "", bytes.NewBuffer(d))
 			if e != nil {
 				t.Fatal(e)
 			}

@@ -1,4 +1,4 @@
-package erc20
+package checkbalance_native
 
 import (
 	"errors"
@@ -10,7 +10,6 @@ import (
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
 	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/polygon"
-	"github.com/ethereum/go-ethereum/common"
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -18,18 +17,19 @@ import (
 
 // ApplyRoutes applies router to gin Router
 func ApplyRoutes(r *gin.RouterGroup) {
-	g := r.Group("/erc20")
+	g := r.Group("/native")
 	{
 		g.Use(tokenmiddleware.ApiAuth)
-		g.POST("", erc20CheckBalance)
+		g.POST("", nativeCheckBalance)
 	}
 }
 
-func erc20CheckBalance(c *gin.Context) {
-	var req CheckErc20BalanceRequest
+func nativeCheckBalance(c *gin.Context) {
+	var req CheckNativeBalanceRequest
 	err := c.BindJSON(&req)
 	if err != nil {
-		httpo.NewErrorResponse(http.StatusBadRequest, "body is not valid").Send(c, http.StatusBadRequest)
+		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
+
 		return
 	}
 	network := "matic"
@@ -38,6 +38,7 @@ func erc20CheckBalance(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+
 			return
 		}
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
@@ -46,15 +47,16 @@ func erc20CheckBalance(c *gin.Context) {
 	}
 	var balance *big.Int
 
-	balance, err = polygon.GetERC20Balance(mnemonic, common.HexToAddress(req.ContractAddr))
+	balance, err = polygon.GetBalance(mnemonic)
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get balance").SendD(c)
-		logwrapper.Errorf("failed to get ERC20 balance of wallet of userId: %v , network: %v, contractAddr: %v , error: %s", req.UserId,
-			network, req.ContractAddr, err)
+		logwrapper.Errorf("failed to get balance from wallet of userId: %v and network: %v, error: %s",
+			req.UserId, network, err)
 		return
 	}
 
-	httpo.NewSuccessResponse(200, "balance successfully fetched", CheckErc20BalancePayload{
+	payload := CheckNativeBalancePayload{
 		Balance: balance.String(),
-	}).SendD(c)
+	}
+	httpo.NewSuccessResponse(200, "balance successfully fetched", payload).SendD(c)
 }

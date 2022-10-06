@@ -1,10 +1,10 @@
-package erc721
+package checkbalance_erc20
 
-type CheckErc721BalanceRequest struct {
+type CheckErc20BalanceRequest struct {
 	UserId       string `json:"userId" binding:"required"`
 	ContractAddr string `json:"contractAddr" binding:"required"`
 }
 
-type CheckErc721BalancePayload struct {
+type CheckErc20BalancePayload struct {
 	Balance string `json:"balance"`
 }

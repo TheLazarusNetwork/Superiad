@@ -1,7 +1,8 @@
-package approveall
+package transfer_erc20
 
 import (
 	"errors"
+	"math/big"
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
@@ -17,28 +18,29 @@ import (
 
 // ApplyRoutes applies router to gin Router
 func ApplyRoutes(r *gin.RouterGroup) {
-	g := r.Group("/approve-all")
+	g := r.Group("/transfer")
 	{
 		g.Use(tokenmiddleware.ApiAuth)
-		g.POST("", approveAll)
+		g.POST("", transfer)
 	}
 }
 
-func approveAll(c *gin.Context) {
+func transfer(c *gin.Context) {
 	network := "matic"
-	var req ApproveAllRequest
+	var req TransferRequest
 	if err := c.BindJSON(&req); err != nil {
 		logwrapper.Errorf("invalid request %s", err)
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
-
 		return
 	}
 	mnemonic, err := user.GetMnemonic(req.UserId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+
 			return
 		}
+
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
 		logwrapper.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
 			req.UserId, err)
@@ -46,16 +48,13 @@ func approveAll(c *gin.Context) {
 	}
 
 	var hash string
-
-	hash, err = polygon.SetAprovalForAllErc721(mnemonic, common.HexToAddress(req.OperatorAddress), common.HexToAddress(req.ContractAddress), req.Approved)
+	hash, err = polygon.TransferERC20(mnemonic, common.HexToAddress(req.To), common.HexToAddress(req.ContractAddress), *big.NewInt(req.Amount))
 	if err != nil {
-
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to approve all").SendD(c)
-		logwrapper.Errorf("failed to approve all to operator: %v from wallet of userId: %v, network: %v, contractAddr: %v, error: %s", req.OperatorAddress,
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
+		logwrapper.Errorf("failed to tranfer to: %v from wallet of userId: %v , network: %v, contractAddr: %v , error: %s", req.To,
 			req.UserId, network, req.ContractAddress, err)
 		return
 	}
-
 	sendSuccessResponse(c, hash, req.UserId)
 }
 

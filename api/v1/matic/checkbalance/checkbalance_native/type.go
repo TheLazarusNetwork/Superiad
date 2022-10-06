@@ -1,4 +1,4 @@
-package native
+package checkbalance_native
 
 type CheckNativeBalanceRequest struct {
 	UserId string `json:"userId" binding:"required"`

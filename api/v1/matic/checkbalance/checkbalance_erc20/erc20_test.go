@@ -1,4 +1,4 @@
-package erc721
+package checkbalance_erc20
 
 import (
 	"bytes"
@@ -28,25 +28,25 @@ func Test_CheckBalance(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Run("Fetch user balance for ERC721", func(t *testing.T) {
+
+	t.Run("Fetch user balance for ERC20", func(t *testing.T) {
 		rr := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(rr)
 
-		req := CheckErc721BalanceRequest{
-			UserId:       "62",
-			ContractAddr: "0x975362c36b6842d48d02DBD3A077745Fc1C64175",
+		req := CheckErc20BalanceRequest{
+			UserId: "62",
 		}
 		body, err := json.Marshal(req)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		httpReq, err := http.NewRequest("POST", "", bytes.NewBuffer(body))
+		httpReq, err := http.NewRequest("POST", "/?erc20address=0x2d7882bedcbfddce29ba99965dd3cdf7fcb10a1e", bytes.NewBuffer(body))
 		if err != nil {
 			t.Fatal(err)
 		}
 		c.Request = httpReq
-		erc721CheckBalance(c)
+		erc20CheckBalance(c)
 		assert.Equal(t, 200, rr.Result().StatusCode)
 	})
 }

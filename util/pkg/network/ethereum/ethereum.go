@@ -88,7 +88,7 @@ func Transfer(mnemonic string, to common.Address, value big.Int) (string, error)
 
 	maxPriorityFeePerGas, err := client.SuggestGasTipCap(context.Background())
 	if err != nil {
-		logwrapper.Errorf("failed to suggestGasTipCap, error %v", err)
+		logwrapper.Errorf("failed to suggestGasTipCap, error %s", err)
 		return "", err
 	}
 	chainId, err := GetChainId()
