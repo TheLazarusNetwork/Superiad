@@ -15,10 +15,16 @@ import (
 
 func OnlyUnlocked() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ByteBody, _ := io.ReadAll(c.Request.Body)
+		ByteBody, err := io.ReadAll(c.Request.Body)
+		if err != nil {
+			httpo.NewErrorResponse(500, "failed to read body").SendD(c)
+			logo.Errorf("failed to read body from request: %s", err)
+			c.Abort()
+			return
+		}
 		c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
 		var req AccessRequest
-		err := c.ShouldBindJSON(&req)
+		err = c.ShouldBindJSON(&req)
 		if err != nil {
 			httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 			c.Abort()
