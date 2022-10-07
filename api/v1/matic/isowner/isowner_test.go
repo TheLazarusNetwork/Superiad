@@ -37,7 +37,6 @@ func Test_IsOwner(t *testing.T) {
 
 		req := IsOwnerRequest{
 			UserId:  "62",
-			ChainId: 80001,
 			TokenId: 27,
 		}
 		body, err := json.Marshal(req)
@@ -61,7 +60,6 @@ func Test_IsOwner(t *testing.T) {
 
 		req := IsOwnerRequest{
 			UserId:  "62",
-			ChainId: 80001,
 			TokenId: 4,
 		}
 		body, err := json.Marshal(req)
