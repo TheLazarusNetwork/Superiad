@@ -1,10 +1,16 @@
 package user
 
 import (
+	"errors"
+
 	"github.com/TheLazarusNetwork/mtwallet/models/transaction"
 	"github.com/TheLazarusNetwork/mtwallet/pkg/store"
 	"github.com/TheLazarusNetwork/mtwallet/pkg/wallet"
 	"github.com/google/uuid"
+)
+
+var (
+	ErrNoRecordFound = errors.New("no record found")
 )
 
 type User struct {
@@ -44,6 +50,19 @@ func AddTrasactionHash(userId string, hash string) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func SetLockStatus(userId string, lockStatus bool) error {
+	db := store.DB
+	res := db.Model(&User{}).Where("user_id = ?", userId).Update("is_user_locked", lockStatus)
+	if err := res.Error; err != nil {
+		return err
+	}
+	if res.RowsAffected == 0 {
+		return ErrNoRecordFound
+	}
+
 	return nil
 }
 

@@ -1,7 +1,9 @@
 package onlyunlockedmiddleware
 
 import (
+	"bytes"
 	"errors"
+	"io"
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
@@ -13,21 +15,26 @@ import (
 
 func OnlyUnlocked() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		ByteBody, _ := io.ReadAll(c.Request.Body)
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
 		var req AccessRequest
 		err := c.ShouldBindJSON(&req)
 		if err != nil {
 			httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
+			c.Abort()
 			return
 		}
 		_user, err := user.GetUser(req.UserId)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+				c.Abort()
 				return
 			}
 
 			httpo.NewErrorResponse(500, "failed to fetch user").SendD(c)
 			logo.Errorf("failed to fetch user with id: %s, err: %s", req.UserId, err)
+			c.Abort()
 			return
 		}
 
@@ -36,6 +43,7 @@ func OnlyUnlocked() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
 
 		c.Next()
 	}

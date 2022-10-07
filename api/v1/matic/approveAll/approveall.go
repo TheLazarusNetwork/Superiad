@@ -18,7 +18,6 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/approve-all")
 	{
-
 		g.POST("", approveAll)
 	}
 }
@@ -29,7 +28,6 @@ func approveAll(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logo.Errorf("invalid request %s", err)
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
-
 		return
 	}
 	mnemonic, err := user.GetMnemonic(req.UserId)
