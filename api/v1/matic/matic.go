@@ -21,10 +21,10 @@ func ApplyRoutes(r *gin.RouterGroup) {
 		checkbalance.ApplyRoutes(v1)
 		fetchwallet.ApplyRoutes(v1)
 		isowner.ApplyRoutes(v1)
-		signmessage.ApplyRoutes(v1)
 		verifysignature.ApplyRoutes(v1)
 
 		v1.Use(onlyunlockedmiddleware.OnlyUnlocked())
+		signmessage.ApplyRoutes(v1)
 		transfer.ApplyRoutes(v1)
 		approve.ApplyRoutes(v1)
 		approveall.ApplyRoutes(v1)
