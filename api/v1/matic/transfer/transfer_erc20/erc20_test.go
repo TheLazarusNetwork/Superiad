@@ -32,10 +32,9 @@ func Test_Transfer(t *testing.T) {
 	}
 
 	type network struct {
-		name          string
-		chainId       int64
-		erc20Address  string
-		erc721Address string
+		name         string
+		chainId      int64
+		erc20Address string
 	}
 	networks := []network{
 		{
