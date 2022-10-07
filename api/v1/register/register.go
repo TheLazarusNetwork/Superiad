@@ -5,7 +5,6 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +14,7 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/register")
 	{
-		g.Use(tokenmiddleware.ApiAuth)
+
 		g.GET("", register)
 	}
 }

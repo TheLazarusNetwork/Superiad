@@ -7,7 +7,6 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
 	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,14 +19,14 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/isowner")
 	{
-		g.Use(tokenmiddleware.ApiAuth)
+
 		g.POST("", isowner)
 	}
 }
 
 func isowner(c *gin.Context) {
 	var req IsOwnerRequest
-	err := c.BindJSON(&req)
+	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 

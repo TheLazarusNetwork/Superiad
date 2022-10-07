@@ -7,7 +7,6 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
 	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,7 +19,7 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/erc721")
 	{
-		g.Use(tokenmiddleware.ApiAuth)
+
 		g.POST("", transfer)
 	}
 }
@@ -28,7 +27,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 func transfer(c *gin.Context) {
 	network := "matic"
 	var req TransferRequest
-	if err := c.BindJSON(&req); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		logo.Errorf("invalid request %s", err)
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 		return

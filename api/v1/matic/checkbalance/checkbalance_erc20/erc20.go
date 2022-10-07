@@ -7,7 +7,6 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
 	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,14 +19,14 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/erc20")
 	{
-		g.Use(tokenmiddleware.ApiAuth)
+
 		g.POST("", erc20CheckBalance)
 	}
 }
 
 func erc20CheckBalance(c *gin.Context) {
 	var req CheckErc20BalanceRequest
-	err := c.BindJSON(&req)
+	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is not valid").Send(c, http.StatusBadRequest)
 		return

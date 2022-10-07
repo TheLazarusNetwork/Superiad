@@ -6,7 +6,6 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
 	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"gorm.io/gorm"
@@ -18,7 +17,7 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/fetchwallet/:userId")
 	{
-		g.Use(tokenmiddleware.ApiAuth)
+
 		g.GET("", fetchwallet)
 	}
 }

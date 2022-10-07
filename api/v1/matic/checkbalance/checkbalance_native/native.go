@@ -7,7 +7,6 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
 	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"gorm.io/gorm"
@@ -19,14 +18,14 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/native")
 	{
-		g.Use(tokenmiddleware.ApiAuth)
+
 		g.POST("", nativeCheckBalance)
 	}
 }
 
 func nativeCheckBalance(c *gin.Context) {
 	var req CheckNativeBalanceRequest
-	err := c.BindJSON(&req)
+	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 

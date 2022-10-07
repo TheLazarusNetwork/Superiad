@@ -1,7 +1,8 @@
-package signmessage
+package verifysignature
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
@@ -15,26 +16,24 @@ import (
 
 // ApplyRoutes applies router to gin Router
 func ApplyRoutes(r *gin.RouterGroup) {
-	g := r.Group("/sign-message")
+	g := r.Group("/verify-signature")
 	{
-
-		g.POST("", signMessage)
+		g.POST("", verifySignature)
 	}
 }
 
-func signMessage(c *gin.Context) {
-	var req SignMessageRequest
+func verifySignature(c *gin.Context) {
+	network := "matic"
+	var req VerifyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		logo.Errorf("invalid request %s", err)
-		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
-
+		err := fmt.Errorf("body is invalid: %w", err)
+		httpo.NewErrorResponse(http.StatusBadRequest, err.Error()).SendD(c)
 		return
 	}
 	mnemonic, err := user.GetMnemonic(req.UserId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
-
 			return
 		}
 
@@ -44,21 +43,17 @@ func signMessage(c *gin.Context) {
 		return
 	}
 
-	signature, err := polygon.SignMessage(mnemonic, req.Message)
+	res, err := polygon.VerifySignature(mnemonic, req.Message, req.Signature)
 	if err != nil {
-
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to sign").SendD(c)
-		logo.Errorf("failed to sign with walletAddress: %s", err)
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to verify signature").SendD(c)
+		logo.Errorf("failed to verify signature from wallet of userId: %v and network: %v, error: %s",
+			req.UserId, network, err)
 		return
 	}
 
-	sendSuccessResponse(c, signature, req.UserId)
-
-}
-
-func sendSuccessResponse(c *gin.Context, signature string, userId string) {
-	payload := SignMessagePayload{
-		Signature: signature,
+	if !res {
+		httpo.NewErrorResponse(httpo.SignatureDenied, "signature is invalid").Send(c, 403)
+		return
 	}
-	httpo.NewSuccessResponse(200, "signature generated", payload).SendD(c)
+	httpo.NewSuccessResponse(200, "signature is valid", nil).SendD(c)
 }

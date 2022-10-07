@@ -11,10 +11,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func onlyUnlocked() gin.HandlerFunc {
+func OnlyUnlocked() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req AccessRequest
-		err := c.BindJSON(&req)
+		err := c.ShouldBindJSON(&req)
 		if err != nil {
 			httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 			return
