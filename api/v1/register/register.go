@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
+	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func register(c *gin.Context) {
 	uid, err := user.AddUser()
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to add user").SendD(c)
-		logwrapper.Errorf("failed to add user, error: %s", err)
+		logo.Errorf("failed to add user, error: %s", err)
 
 	} else {
 		payload := RegisterPayload{

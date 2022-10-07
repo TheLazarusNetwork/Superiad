@@ -6,10 +6,10 @@ import (
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
+	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/polygon"
+	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
 	"gorm.io/gorm"
 
@@ -41,7 +41,7 @@ func isowner(c *gin.Context) {
 			return
 		}
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logwrapper.Errorf("failed to fetch user with id %v, err %s", req.UserId, err)
+		logo.Errorf("failed to fetch user with id %v, err %s", req.UserId, err)
 		return
 	}
 
@@ -49,7 +49,7 @@ func isowner(c *gin.Context) {
 
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to call ERC721IsOwner").SendD(c)
-		logwrapper.Errorf("failed to call ERC721IsOwner for user with id %v,erc721Address %v,tokenId %v, err %s", req.UserId, req.ContractAddress, req.TokenId, err)
+		logo.Errorf("failed to call ERC721IsOwner for user with id %v,erc721Address %v,tokenId %v, err %s", req.UserId, req.ContractAddress, req.TokenId, err)
 		return
 	}
 	payload := IsOwnerPayload{

@@ -7,21 +7,23 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/TheLazarusNetwork/mtwallet/config/dbconfig"
+	"github.com/TheLazarusNetwork/mtwallet/app/stage/appinit"
 	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
-	"github.com/TheLazarusNetwork/mtwallet/models"
+
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/testingcommon"
+	"github.com/TheLazarusNetwork/mtwallet/pkg/store"
+	"github.com/TheLazarusNetwork/mtwallet/pkg/testingcommon"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_SignMessage(t *testing.T) {
 	envconfig.InitEnvVars()
-	models.Migrate()
+
+	appinit.Init()
 	gin.SetMode(gin.TestMode)
 	t.Cleanup(testingcommon.DeleteCreatedEntities())
-	err := dbconfig.GetDb().Model(&user.User{}).Create(&user.User{
+	err := store.DB.Model(&user.User{}).Create(&user.User{
 		UserId:   "60",
 		Mnemonic: "mobile attend orange oxygen valley fan grape suit tool fancy quality disease potato bean trophy",
 	}).Error

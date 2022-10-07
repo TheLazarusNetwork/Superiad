@@ -3,11 +3,13 @@ module github.com/TheLazarusNetwork/mtwallet
 go 1.17
 
 require (
-	github.com/TheLazarusNetwork/go-helpers/httpo v0.0.0-20221006140546-d51802ae4b27
+	github.com/TheLazarusNetwork/go-helpers/httpo v0.0.0-20221007050857-09c7bf66b39e
+	github.com/TheLazarusNetwork/go-helpers/logo v0.0.0-20221006153943-716648cb2d49
 	github.com/btcsuite/btcd v0.22.0-beta.0.20220111032746-97732e52810c
 	github.com/btcsuite/btcd/btcutil v1.1.0
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/ethereum/go-ethereum v1.10.15
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/golang-jwt/jwt/v4 v4.2.0
 	github.com/google/uuid v1.3.0

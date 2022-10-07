@@ -6,10 +6,10 @@ import (
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
+	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/polygon"
+	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -42,7 +42,7 @@ func nativeCheckBalance(c *gin.Context) {
 			return
 		}
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logwrapper.Errorf("failed to fetch user with id %v, err %s", req.UserId, err)
+		logo.Errorf("failed to fetch user with id %v, err %s", req.UserId, err)
 		return
 	}
 	var balance *big.Int
@@ -50,7 +50,7 @@ func nativeCheckBalance(c *gin.Context) {
 	balance, err = polygon.GetBalance(mnemonic)
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get balance").SendD(c)
-		logwrapper.Errorf("failed to get balance from wallet of userId: %v and network: %v, error: %s",
+		logo.Errorf("failed to get balance from wallet of userId: %v and network: %v, error: %s",
 			req.UserId, network, err)
 		return
 	}

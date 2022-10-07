@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
+	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/polygon"
+	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +26,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 func signMessage(c *gin.Context) {
 	var req SignMessageRequest
 	if err := c.BindJSON(&req); err != nil {
-		logwrapper.Errorf("invalid request %s", err)
+		logo.Errorf("invalid request %s", err)
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 
 		return
@@ -40,7 +40,7 @@ func signMessage(c *gin.Context) {
 		}
 
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logwrapper.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
+		logo.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
 			req.UserId, err)
 		return
 	}
@@ -49,7 +49,7 @@ func signMessage(c *gin.Context) {
 	if err != nil {
 
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to sign").SendD(c)
-		logwrapper.Errorf("failed to sign with walletAddress: %s", err)
+		logo.Errorf("failed to sign with walletAddress: %s", err)
 		return
 	}
 

@@ -1,11 +1,9 @@
 package user
 
 import (
-	"log"
-
-	"github.com/TheLazarusNetwork/mtwallet/config/dbconfig"
 	"github.com/TheLazarusNetwork/mtwallet/models/transaction"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/wallet"
+	"github.com/TheLazarusNetwork/mtwallet/pkg/store"
+	"github.com/TheLazarusNetwork/mtwallet/pkg/wallet"
 	"github.com/google/uuid"
 )
 
@@ -13,28 +11,15 @@ type User struct {
 	UserId       string                    `json:"userId" gorm:"primary_key"`
 	Mnemonic     string                    `json:"-" gorm:"unique;not null"`
 	Transactions []transaction.Transaction `json:"transactions" gorm:"foreignKey:UserId"`
-}
-
-var initDone bool = false
-
-func Init() {
-	if initDone {
-		return
-	}
-	db := dbconfig.GetDb()
-	if err := db.AutoMigrate(&User{}); err != nil {
-		log.Fatal(err)
-	}
-	initDone = true
+	IsUserLocked bool                      `json:"isUserLocked"`
 }
 
 func AddUser() (string, error) {
-	Init()
 	mnemonic, err := wallet.GenerateMnemonic()
 	if err != nil {
 		return "", err
 	}
-	db := dbconfig.GetDb()
+	db := store.DB
 	userId := uuid.NewString()
 	newUser := User{
 		UserId:   userId,
@@ -48,7 +33,7 @@ func AddUser() (string, error) {
 }
 
 func AddTrasactionHash(userId string, hash string) error {
-	db := dbconfig.GetDb()
+	db := store.DB
 	trx := transaction.Transaction{UserId: userId, TrasactionHash: hash}
 	association := db.Model(&User{UserId: userId}).Association("Transactions")
 	err := association.Error
@@ -72,8 +57,7 @@ func GetMnemonic(userId string) (mnemonic string, err error) {
 }
 
 func GetUser(userId string) (user User, err error) {
-	Init()
-	db := dbconfig.GetDb()
+	db := store.DB
 	err = db.Model(&User{}).Where("user_id = ?", userId).First(&user).Error
 	if err != nil {
 		return User{}, err

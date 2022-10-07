@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
+	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,5 +41,5 @@ func ApiAuth(c *gin.Context) {
 }
 
 func logValidationFailed(token string, err error) {
-	logwrapper.Warnf("validation failed with token %v, error: %s", token, err)
+	logo.Warnf("validation failed with token %v, error: %s", token, err)
 }

@@ -6,10 +6,10 @@ import (
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
+	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/polygon"
+	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
 	"gorm.io/gorm"
 
@@ -43,7 +43,7 @@ func erc721CheckBalance(c *gin.Context) {
 			return
 		}
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logwrapper.Errorf("failed to fetch user with id %v, err %s", req.UserId, err)
+		logo.Errorf("failed to fetch user with id %v, err %s", req.UserId, err)
 		return
 	}
 	var balance *big.Int
@@ -51,7 +51,7 @@ func erc721CheckBalance(c *gin.Context) {
 	balance, err = polygon.GetERC721Balance(mnemonic, common.HexToAddress(req.ContractAddr))
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get ERC721 balance").SendD(c)
-		logwrapper.Errorf("failed to get ERC721 balance of wallet of userId: %v , network: %v, contractAddr: %v , error: %s", req.UserId,
+		logo.Errorf("failed to get ERC721 balance of wallet of userId: %v , network: %v, contractAddr: %v , error: %s", req.UserId,
 			network, req.ContractAddr, err)
 		return
 	}

@@ -6,10 +6,10 @@ import (
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
+	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/polygon"
+	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
 	"gorm.io/gorm"
 
@@ -29,7 +29,7 @@ func approve(c *gin.Context) {
 	network := "matic"
 	var req ApproveRequest
 	if err := c.BindJSON(&req); err != nil {
-		logwrapper.Errorf("invalid request %s", err)
+		logo.Errorf("invalid request %s", err)
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 		return
 	}
@@ -40,7 +40,7 @@ func approve(c *gin.Context) {
 			return
 		}
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logwrapper.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
+		logo.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
 			req.UserId, err)
 
 		return
@@ -51,7 +51,7 @@ func approve(c *gin.Context) {
 	hash, err = polygon.ApproveERC721(mnemonic, common.HexToAddress(req.ToAddress), common.HexToAddress(req.ContractAddress), *big.NewInt(req.TokenId))
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to approve").SendD(c)
-		logwrapper.Errorf("failed to approve to: %v from wallet of userId: %v, network: %v, contractAddr: %v, tokenId: %v, error: %", req.ToAddress,
+		logo.Errorf("failed to approve to: %v from wallet of userId: %v, network: %v, contractAddr: %v, tokenId: %v, error: %", req.ToAddress,
 			req.UserId, network, req.ContractAddress, req.TokenId, err)
 		return
 	}
@@ -64,7 +64,7 @@ func sendSuccessResponse(c *gin.Context, hash string, userId string) {
 		TrasactionHash: hash,
 	}
 	if err := user.AddTrasactionHash(userId, hash); err != nil {
-		logwrapper.Errorf("failed to add transaction hash: %v to user id: %v, error: %s", hash, userId, err)
+		logo.Errorf("failed to add transaction hash: %v to user id: %v, error: %s", hash, userId, err)
 	}
 	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
 }

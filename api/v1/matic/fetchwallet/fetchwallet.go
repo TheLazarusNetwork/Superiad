@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
+	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
 	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/network/polygon"
+	"github.com/TheLazarusNetwork/mtwallet/pkg/network/polygon"
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -37,14 +37,14 @@ func fetchwallet(c *gin.Context) {
 			return
 		}
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logwrapper.Errorf("failed to fetch user mnemonic, error: %s", err)
+		logo.Errorf("failed to fetch user mnemonic, error: %s", err)
 		return
 	}
 
 	walletAddr, err := polygon.GetWalletAddres(mnemonic)
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get wallet address").SendD(c)
-		logwrapper.Errorf("failed to get wallet address for userId: %v", paramUserId)
+		logo.Errorf("failed to get wallet address for userId: %v", paramUserId)
 		return
 	}
 
