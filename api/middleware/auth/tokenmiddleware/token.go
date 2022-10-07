@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/envutil"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/httphelper"
-	"github.com/TheLazarusNetwork/mtwallet/util/pkg/logwrapper"
+	"github.com/TheLazarusNetwork/go-helpers/httpo"
+	"github.com/TheLazarusNetwork/go-helpers/logo"
+	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,24 +22,24 @@ func ApiAuth(c *gin.Context) {
 
 	if err != nil {
 		logValidationFailed(token, err)
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.Abort()
 		return
 	}
 	if headers.Authorization == "" {
 		logValidationFailed(token, err)
-		httphelper.ErrResponse(c, http.StatusBadRequest, ErrAuthHeaderMissing.Error())
+		httpo.NewErrorResponse(http.StatusBadRequest, ErrAuthHeaderMissing.Error()).SendD(c)
 		c.Abort()
 		return
 	}
 
-	if token != envutil.MustGetEnv("TOKEN") {
+	if token != envconfig.EnvVars.TOKEN {
 		logValidationFailed(token, err)
-		httphelper.ErrResponse(c, http.StatusForbidden, "token is invalid")
+		httpo.NewErrorResponse(http.StatusForbidden, "token is invalid").SendD(c)
 		c.Abort()
 		return
 	}
 }
 
 func logValidationFailed(token string, err error) {
-	logwrapper.Warnf("validation failed with token %v, error: %v", token, err)
+	logo.Warnf("validation failed with token %v, error: %s", token, err)
 }
