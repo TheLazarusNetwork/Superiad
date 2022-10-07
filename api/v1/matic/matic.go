@@ -1,15 +1,15 @@
 package matic
 
 import (
-	"github.com/TheLazarusNetwork/mtwallet/api/middleware/onlyunlockedmiddleware"
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/approve"
-	approveall "github.com/TheLazarusNetwork/mtwallet/api/v1/matic/approveAll"
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/checkbalance"
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/fetchwallet"
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/isowner"
-	signmessage "github.com/TheLazarusNetwork/mtwallet/api/v1/matic/signMessage"
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic/transfer"
-	verifysignature "github.com/TheLazarusNetwork/mtwallet/api/v1/matic/verifySignature"
+	"github.com/TheLazarusNetwork/superiad/api/middleware/onlyunlockedmiddleware"
+	"github.com/TheLazarusNetwork/superiad/api/v1/matic/approve"
+	approveall "github.com/TheLazarusNetwork/superiad/api/v1/matic/approveAll"
+	"github.com/TheLazarusNetwork/superiad/api/v1/matic/checkbalance"
+	"github.com/TheLazarusNetwork/superiad/api/v1/matic/fetchwallet"
+	"github.com/TheLazarusNetwork/superiad/api/v1/matic/isowner"
+	signmessage "github.com/TheLazarusNetwork/superiad/api/v1/matic/signMessage"
+	"github.com/TheLazarusNetwork/superiad/api/v1/matic/transfer"
+	verifysignature "github.com/TheLazarusNetwork/superiad/api/v1/matic/verifySignature"
 
 	"github.com/gin-gonic/gin"
 )

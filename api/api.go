@@ -1,8 +1,8 @@
 package api
 
 import (
-	"github.com/TheLazarusNetwork/mtwallet/api/middleware/auth/tokenmiddleware"
-	v1 "github.com/TheLazarusNetwork/mtwallet/api/v1"
+	"github.com/TheLazarusNetwork/superiad/api/middleware/auth/tokenmiddleware"
+	v1 "github.com/TheLazarusNetwork/superiad/api/v1"
 
 	"github.com/gin-gonic/gin"
 )

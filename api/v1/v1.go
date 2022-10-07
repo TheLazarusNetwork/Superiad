@@ -1,9 +1,9 @@
 package apiv1
 
 import (
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/matic"
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/register"
-	"github.com/TheLazarusNetwork/mtwallet/api/v1/setlock"
+	"github.com/TheLazarusNetwork/superiad/api/v1/matic"
+	"github.com/TheLazarusNetwork/superiad/api/v1/register"
+	"github.com/TheLazarusNetwork/superiad/api/v1/setlock"
 	"github.com/gin-gonic/gin"
 )
 

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
-	"github.com/TheLazarusNetwork/mtwallet/pkg/wallet"
+	"github.com/TheLazarusNetwork/superiad/config/envconfig"
+	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 )

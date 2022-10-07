@@ -3,9 +3,9 @@ package user
 import (
 	"errors"
 
-	"github.com/TheLazarusNetwork/mtwallet/models/transaction"
-	"github.com/TheLazarusNetwork/mtwallet/pkg/store"
-	"github.com/TheLazarusNetwork/mtwallet/pkg/wallet"
+	"github.com/TheLazarusNetwork/superiad/models/transaction"
+	"github.com/TheLazarusNetwork/superiad/pkg/store"
+	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
 	"github.com/google/uuid"
 )
 

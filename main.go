@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/TheLazarusNetwork/mtwallet/app"
+	"github.com/TheLazarusNetwork/superiad/app"
 )
 
 func main() {

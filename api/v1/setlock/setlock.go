@@ -7,7 +7,7 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/models/user"
+	"github.com/TheLazarusNetwork/superiad/models/user"
 
 	"github.com/gin-gonic/gin"
 )

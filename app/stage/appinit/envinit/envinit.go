@@ -1,6 +1,6 @@
 package envinit
 
-import "github.com/TheLazarusNetwork/mtwallet/config/envconfig"
+import "github.com/TheLazarusNetwork/superiad/config/envconfig"
 
 func Init() {
 	envconfig.InitEnvVars()

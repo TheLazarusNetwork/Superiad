@@ -4,7 +4,7 @@ package environment
 import (
 	"log"
 
-	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
+	"github.com/TheLazarusNetwork/superiad/config/envconfig"
 )
 
 type Environment int

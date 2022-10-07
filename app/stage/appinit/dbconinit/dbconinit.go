@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
-	"github.com/TheLazarusNetwork/mtwallet/pkg/store"
+	"github.com/TheLazarusNetwork/superiad/config/envconfig"
+	"github.com/TheLazarusNetwork/superiad/pkg/store"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

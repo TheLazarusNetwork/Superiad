@@ -3,9 +3,9 @@ package dbmigrate
 
 import (
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/models/transaction"
-	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/pkg/store"
+	"github.com/TheLazarusNetwork/superiad/models/transaction"
+	"github.com/TheLazarusNetwork/superiad/models/user"
+	"github.com/TheLazarusNetwork/superiad/pkg/store"
 )
 
 func Migrate() {

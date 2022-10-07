@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/api"
-	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
+	"github.com/TheLazarusNetwork/superiad/api"
+	"github.com/TheLazarusNetwork/superiad/config/envconfig"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

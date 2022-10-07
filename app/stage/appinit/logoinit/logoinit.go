@@ -3,7 +3,7 @@ package logoinit
 
 import (
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/pkg/environment"
+	"github.com/TheLazarusNetwork/superiad/pkg/environment"
 	"github.com/sirupsen/logrus"
 )
 

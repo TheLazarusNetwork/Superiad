@@ -4,12 +4,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/TheLazarusNetwork/mtwallet/app/stage/appinit"
-	"github.com/TheLazarusNetwork/mtwallet/config/envconfig"
+	"github.com/TheLazarusNetwork/superiad/app/stage/appinit"
+	"github.com/TheLazarusNetwork/superiad/config/envconfig"
 
-	"github.com/TheLazarusNetwork/mtwallet/models/user"
-	"github.com/TheLazarusNetwork/mtwallet/pkg/store"
-	"github.com/TheLazarusNetwork/mtwallet/pkg/testingcommon"
+	"github.com/TheLazarusNetwork/superiad/models/user"
+	"github.com/TheLazarusNetwork/superiad/pkg/store"
+	"github.com/TheLazarusNetwork/superiad/pkg/testingcommon"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )

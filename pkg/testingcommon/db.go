@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/mtwallet/pkg/store"
+	"github.com/TheLazarusNetwork/superiad/pkg/store"
 	"gorm.io/gorm"
 )
 
@@ -64,7 +64,7 @@ func DeleteCreatedEntities() func() {
 
 			q := fmt.Sprintf(`DELETE FROM %v WHERE %v=%v`, entry.table, entry.keyname, deleteValue)
 			if err := db.Exec(q).Error; err != nil {
-				logo.Warnf("failed to exec query: %s, in clean up hook, %s", q,err)
+				logo.Warnf("failed to exec query: %s, in clean up hook, %s", q, err)
 			}
 		}
 

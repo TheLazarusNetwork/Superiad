@@ -1,4 +1,4 @@
-module github.com/TheLazarusNetwork/mtwallet
+module github.com/TheLazarusNetwork/superiad
 
 go 1.17
 
