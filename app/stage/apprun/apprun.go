@@ -25,6 +25,6 @@ func Run() {
 	port := envconfig.EnvVars.APP_PORT
 	err := ginApp.Run(fmt.Sprintf(":%d", port))
 	if err != nil {
-		logo.Fatalf("failed to serve app on port %s: %s", port, err)
+		logo.Fatalf("failed to serve app on port %d: %s", port, err)
 	}
 }

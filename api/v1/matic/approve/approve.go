@@ -50,7 +50,7 @@ func approve(c *gin.Context) {
 	hash, err = polygon.ApproveERC721(mnemonic, common.HexToAddress(req.ToAddress), common.HexToAddress(req.ContractAddress), *big.NewInt(req.TokenId))
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to approve").SendD(c)
-		logo.Errorf("failed to approve to: %v from wallet of userId: %v, network: %v, contractAddr: %v, tokenId: %v, error: %", req.ToAddress,
+		logo.Errorf("failed to approve to: %v from wallet of userId: %v, network: %v, contractAddr: %v, tokenId: %v, error: %s", req.ToAddress,
 			req.UserId, network, req.ContractAddress, req.TokenId, err)
 		return
 	}
