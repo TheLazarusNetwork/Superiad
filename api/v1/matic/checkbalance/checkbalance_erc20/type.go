@@ -8,3 +8,8 @@ type CheckErc20BalanceRequest struct {
 type CheckErc20BalancePayload struct {
 	Balance string `json:"balance"`
 }
+
+type CheckBalanceRequest struct {
+	Mnemonic string `json:"mnemonic"`
+	WalletId string `json:"walletId"`
+}

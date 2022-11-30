@@ -2,6 +2,7 @@ package checkbalance_erc20
 
 import (
 	"errors"
+	"fmt"
 	"math/big"
 	"net/http"
 
@@ -16,11 +17,12 @@ import (
 )
 
 // ApplyRoutes applies router to gin Router
-func ApplyRoutes(r *gin.RouterGroup) {
+func 	ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/erc20")
 	{
 
 		g.POST("", erc20CheckBalance)
+		g.POST("/new", checkbalance)
 	}
 }
 
@@ -52,6 +54,31 @@ func erc20CheckBalance(c *gin.Context) {
 			network, req.ContractAddr, err)
 		return
 	}
+
+	payload := CheckErc20BalancePayload{
+		Balance: balance.String(),
+	}
+	httpo.NewSuccessResponse(200, "balance successfully fetched", payload).SendD(c)
+}
+
+func checkbalance(c *gin.Context) {
+
+	var req CheckBalanceRequest
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		logo.Errorf("request body is not valid , error: %s", err)
+		httpo.NewErrorResponse(http.StatusBadRequest, "body is not valid").Send(c, http.StatusBadRequest)
+		return
+	}
+
+	balance, err := polygon.GetERC20Balance(req.Mnemonic, common.HexToAddress(req.WalletId))
+	if err != nil {
+		logo.Errorf("failed to get balance of wallet , error: %s", err)
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get balance").SendD(c)
+		return
+	}
+
+	fmt.Println("balance is ", &balance)
 
 	payload := CheckErc20BalancePayload{
 		Balance: balance.String(),

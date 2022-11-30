@@ -21,6 +21,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	{
 
 		g.POST("", transfer)
+		g.POST("/new", newtransfer)
 	}
 }
 
@@ -52,6 +53,22 @@ func transfer(c *gin.Context) {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
 		logo.Errorf("failed to tranfer to: %v from wallet of userId: %v , network: %v, contractAddr: %v , error: %s", req.To,
 			req.UserId, network, req.ContractAddress, err)
+		return
+	}
+	sendSuccessResponse(c, hash, req.UserId)
+}
+
+func newtransfer(c *gin.Context) {
+	var req NewTransferRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		logo.Errorf("invalid request %s", err)
+		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
+		return
+	}
+	hash, err := polygon.TransferERC20(req.Mnemonic, common.HexToAddress(req.RcverWallet), common.HexToAddress(req.SenderWallet), *big.NewInt(req.Amount))
+	if err != nil {
+		logo.Errorf("failed to transfer balance of wallet , error: %s", err)
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
 		return
 	}
 	sendSuccessResponse(c, hash, req.UserId)
