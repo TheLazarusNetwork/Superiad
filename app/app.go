@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/TheLazarusNetwork/superiad/app/stage/appinit"
-	"github.com/TheLazarusNetwork/superiad/app/stage/apprun"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/app/stage/appinit"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/app/stage/apprun"
 
 	"github.com/gin-gonic/gin"
 )

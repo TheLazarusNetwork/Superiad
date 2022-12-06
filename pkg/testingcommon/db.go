@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/superiad/pkg/store"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/store"
 	"gorm.io/gorm"
 )
 

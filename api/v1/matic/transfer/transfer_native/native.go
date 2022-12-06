@@ -7,8 +7,8 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/models/user"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
 	"gorm.io/gorm"
 
@@ -20,7 +20,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/native")
 	{
 
-		g.POST("", nativeTransfer)
+		g.POST("", nativeTransferWithSalt)
 	}
 }
 
@@ -63,6 +63,42 @@ func sendSuccessResponse(c *gin.Context, hash string, userId string) {
 	}
 	if err := user.AddTrasactionHash(userId, hash); err != nil {
 		logo.Errorf("failed to add transaction hash: %v to user id: %v, error: %s", hash, userId, err)
+	}
+	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
+}
+
+func nativeTransferWithSalt(c *gin.Context) {
+	//
+	network := "matic"
+	var req TransferRequestSalt
+	if err := c.ShouldBindJSON(&req); err != nil {
+		logo.Errorf("invalid request %s", err)
+		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
+		return
+	}
+	mnemonic, err := user.GetMnemonic(req.Mnemonic)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+
+			return
+		}
+
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
+		logo.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
+			req.WalletAddress, err)
+		return
+	}
+
+	var hash string
+	hash, err = polygon.Transfer(mnemonic, common.HexToAddress(req.To), *big.NewInt(req.Amount))
+	if err != nil {
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
+		logo.Errorf("failed to tranfer to: %v from wallet: %v and network: %v, error: %s", req.To, req.WalletAddress, network, err)
+		return
+	}
+	payload := TransferPayload{
+		TrasactionHash: hash,
 	}
 	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
 }

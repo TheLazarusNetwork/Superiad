@@ -4,12 +4,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/TheLazarusNetwork/superiad/app/stage/appinit"
-	"github.com/TheLazarusNetwork/superiad/config/envconfig"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/app/stage/appinit"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/config/envconfig"
 
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/store"
-	"github.com/TheLazarusNetwork/superiad/pkg/testingcommon"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/models/user"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/store"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/testingcommon"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )

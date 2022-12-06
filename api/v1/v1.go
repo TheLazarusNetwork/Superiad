@@ -1,9 +1,8 @@
 package apiv1
 
 import (
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic"
-	"github.com/TheLazarusNetwork/superiad/api/v1/register"
-	"github.com/TheLazarusNetwork/superiad/api/v1/setlock"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/api/v1/matic"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/api/v1/wallet"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,8 +10,8 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	v1 := r.Group("/v1.0")
 	{
-		register.ApplyRoutes(v1)
-		setlock.ApplyRoutes(v1)
+		// register.ApplyRoutes(v1)
+		wallet.ApplyRoutes(v1)
 		matic.ApplyRoutes(v1)
 	}
 }

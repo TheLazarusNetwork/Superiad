@@ -7,8 +7,8 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/models/user"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/network/polygon"
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +18,7 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/native")
 	{
-
-		g.POST("", nativeCheckBalance)
+		g.GET("/:walletAddress", nativeCheckBalanceWithSalt)
 	}
 }
 
@@ -51,6 +50,28 @@ func nativeCheckBalance(c *gin.Context) {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get balance").SendD(c)
 		logo.Errorf("failed to get balance from wallet of userId: %v and network: %v, error: %s",
 			req.UserId, network, err)
+		return
+	}
+
+	payload := CheckNativeBalancePayload{
+		Balance: balance.String(),
+	}
+	httpo.NewSuccessResponse(200, "balance successfully fetched", payload).SendD(c)
+}
+
+func nativeCheckBalanceWithSalt(c *gin.Context) {
+	paramWalletAddress := c.Param("walletAddress")
+	if len(paramWalletAddress) <= 0 {
+		httpo.NewErrorResponse(http.StatusBadRequest, "valid wallet address is required").SendD(c)
+		return
+	}
+	network := "matic"
+
+	var balance *big.Int
+	balance, err := polygon.GetBalanceFromWalletAddress(paramWalletAddress)
+	if err != nil {
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get balance").SendD(c)
+		logo.Errorf("failed to get balance from wallet of userId: %v and network: %v, error: %s", paramWalletAddress, network, err)
 		return
 	}
 

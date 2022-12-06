@@ -2,11 +2,13 @@ package polygon
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"math/big"
 
-	"github.com/TheLazarusNetwork/superiad/config/envconfig"
-	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/config/envconfig"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/wallet"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
@@ -40,6 +42,18 @@ func GetBalance(mnemonic string) (*big.Int, error) {
 	return bal, nil
 }
 
+func GetBalanceFromWalletAddress(walletAddress string) (*big.Int, error) {
+	client, err := ethclient.Dial(GetRpcUrl())
+	if err != nil {
+		return nil, fmt.Errorf("failed to dial rpc client :%w", err)
+	}
+	bal, err := client.BalanceAt(context.Background(), common.HexToAddress(walletAddress), nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to call BalanceAt :%w", err)
+	}
+	return bal, nil
+}
+
 func GetNetworkInfo() (*networkInfo, error) {
 	chainId, err := GetChainId()
 	if err != nil {
@@ -59,4 +73,14 @@ func GetWalletAddres(mnemonic string) (string, error) {
 	walletAddr := crypto.PubkeyToAddress(privKey.PublicKey)
 
 	return walletAddr.String(), nil
+}
+
+func GetWalletPrivateKey(mnemonic string) (string, error) {
+	privKey, err := wallet.GetWallet(mnemonic, GetPath())
+	if err != nil {
+		return "", err
+	}
+	privateKeyBytes := crypto.FromECDSA(privKey)
+
+	return hex.EncodeToString(privateKeyBytes[2:]), nil
 }

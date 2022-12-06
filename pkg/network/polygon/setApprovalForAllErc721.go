@@ -1,9 +1,9 @@
 package polygon
 
 import (
-	"github.com/TheLazarusNetwork/superiad/generated/generc721"
-	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
-	rawtrasaction "github.com/TheLazarusNetwork/superiad/pkg/wallet/rawtransaction"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/generated/generc721"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/wallet"
+	rawtrasaction "github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/wallet/rawtransaction"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 )

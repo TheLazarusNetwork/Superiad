@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/TheLazarusNetwork/superiad/app"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/app"
 )
 
 func main() {

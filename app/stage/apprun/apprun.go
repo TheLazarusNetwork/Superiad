@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/superiad/api"
-	"github.com/TheLazarusNetwork/superiad/config/envconfig"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/api"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/config/envconfig"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

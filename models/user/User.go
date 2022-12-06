@@ -3,9 +3,9 @@ package user
 import (
 	"errors"
 
-	"github.com/TheLazarusNetwork/superiad/models/transaction"
-	"github.com/TheLazarusNetwork/superiad/pkg/store"
-	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/models/transaction"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/store"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/wallet"
 	"github.com/google/uuid"
 )
 
@@ -15,7 +15,7 @@ var (
 
 type User struct {
 	UserId       string                    `json:"userId" gorm:"primary_key"`
-	Mnemonic     string                    `json:"-" gorm:"unique;not null"`
+	Mnemonic     string                    `json:"mnemonic" gorm:"unique;not null"`
 	Transactions []transaction.Transaction `json:"transactions" gorm:"foreignKey:UserId"`
 	IsUserLocked bool                      `json:"isUserLocked"`
 }

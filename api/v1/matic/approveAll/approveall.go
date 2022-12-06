@@ -6,8 +6,8 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/models/user"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
 	"gorm.io/gorm"
 

@@ -7,8 +7,8 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/models/user"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
 	"gorm.io/gorm"
 
@@ -20,7 +20,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/erc20")
 	{
 
-		g.POST("", transfer)
+		g.POST("", transferWithSalt)
 	}
 }
 
@@ -63,6 +63,28 @@ func sendSuccessResponse(c *gin.Context, hash string, userId string) {
 	}
 	if err := user.AddTrasactionHash(userId, hash); err != nil {
 		logo.Errorf("failed to add transaction hash: %v to user id: %v, error: %s", hash, userId, err)
+	}
+	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
+}
+
+func transferWithSalt(c *gin.Context) {
+	network := "matic"
+	var req TransferRequestSalt
+	if err := c.ShouldBindJSON(&req); err != nil {
+		logo.Errorf("invalid request %s", err)
+		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
+		return
+	}
+
+	var hash string
+	hash, err := polygon.TransferERC20(req.Mnemonic, common.HexToAddress(req.To), common.HexToAddress(req.ContractAddress), *big.NewInt(req.Amount))
+	if err != nil {
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
+		logo.Errorf("failed to tranfer to: %v from wallet: %v , network: %v, contractAddr: %v , error: %s", req.To, req.WalletAddress, network, req.ContractAddress, err)
+		return
+	}
+	payload := TransferPayload{
+		TrasactionHash: hash,
 	}
 	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
 }

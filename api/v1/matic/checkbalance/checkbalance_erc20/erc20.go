@@ -7,8 +7,8 @@ import (
 
 	"github.com/TheLazarusNetwork/go-helpers/httpo"
 	"github.com/TheLazarusNetwork/go-helpers/logo"
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/models/user"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
 	"gorm.io/gorm"
 
@@ -20,7 +20,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	g := r.Group("/erc20")
 	{
 
-		g.POST("", erc20CheckBalance)
+		g.GET("/:contractAddress/:walletAddress", erc20CheckBalanceSalt)
 	}
 }
 
@@ -50,6 +50,28 @@ func erc20CheckBalance(c *gin.Context) {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get balance").SendD(c)
 		logo.Errorf("failed to get ERC20 balance of wallet of userId: %v , network: %v, contractAddr: %v , error: %s", req.UserId,
 			network, req.ContractAddr, err)
+		return
+	}
+
+	payload := CheckErc20BalancePayload{
+		Balance: balance.String(),
+	}
+	httpo.NewSuccessResponse(200, "balance successfully fetched", payload).SendD(c)
+}
+
+func erc20CheckBalanceSalt(c *gin.Context) {
+	paramContractAddress := c.Param("contractAddress")
+	paramWalletAddress := c.Param("walletAddress")
+	if len(paramWalletAddress) <= 0 {
+		httpo.NewErrorResponse(http.StatusBadRequest, "valid wallet address is required").SendD(c)
+		return
+	}
+	network := "matic"
+
+	balance, err := polygon.GetERC20BalanceFromWalletAddress(common.HexToAddress(paramWalletAddress), common.HexToAddress(paramContractAddress))
+	if err != nil {
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get balance").SendD(c)
+		logo.Errorf("failed to get ERC20 balance of wallet: %v , network: %v, contractAddr: %v , error: %s", paramWalletAddress, network, paramContractAddress, err)
 		return
 	}
 

@@ -3,7 +3,7 @@ package polygon
 import (
 	"fmt"
 
-	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/pkg/wallet"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 )

@@ -1,15 +1,13 @@
 package appinit
 
 import (
-	"github.com/TheLazarusNetwork/superiad/app/stage/appinit/dbconinit"
-	"github.com/TheLazarusNetwork/superiad/app/stage/appinit/dbmigrate"
-	"github.com/TheLazarusNetwork/superiad/app/stage/appinit/envinit"
-	"github.com/TheLazarusNetwork/superiad/app/stage/appinit/logoinit"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/app/stage/appinit/envinit"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/app/stage/appinit/logoinit"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/app/stage/appinit/redisconn"
 )
 
 func Init() {
 	envinit.Init()
 	logoinit.Init()
-	dbconinit.Init()
-	dbmigrate.Migrate()
+	redisconn.Init()
 }
