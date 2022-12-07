@@ -68,7 +68,6 @@ func sendSuccessResponse(c *gin.Context, hash string, userId string) {
 }
 
 func nativeTransferWithSalt(c *gin.Context) {
-	//
 	network := "matic"
 	var req TransferRequestSalt
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -76,22 +75,9 @@ func nativeTransferWithSalt(c *gin.Context) {
 		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
 		return
 	}
-	mnemonic, err := user.GetMnemonic(req.Mnemonic)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
-
-			return
-		}
-
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logo.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
-			req.WalletAddress, err)
-		return
-	}
 
 	var hash string
-	hash, err = polygon.Transfer(mnemonic, common.HexToAddress(req.To), *big.NewInt(req.Amount))
+	hash, err := polygon.Transfer(req.Mnemonic, common.HexToAddress(req.To), *big.NewInt(req.Amount))
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
 		logo.Errorf("failed to tranfer to: %v from wallet: %v and network: %v, error: %s", req.To, req.WalletAddress, network, err)
