@@ -2,6 +2,7 @@ package transfer_native
 
 import (
 	"errors"
+	"math"
 	"math/big"
 	"net/http"
 
@@ -76,8 +77,11 @@ func nativeTransferWithSalt(c *gin.Context) {
 		return
 	}
 
+	// Convert float64 to bigInt
+	var amountInBigInt = big.NewInt(int64(req.Amount * math.Pow(10, 18)))
+
 	var hash string
-	hash, err := polygon.Transfer(req.Mnemonic, common.HexToAddress(req.To), *big.NewInt(req.Amount))
+	hash, err := polygon.Transfer(req.Mnemonic, common.HexToAddress(req.To), *amountInBigInt)
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
 		logo.Errorf("failed to tranfer to: %v from wallet: %v and network: %v, error: %s", req.To, req.WalletAddress, network, err)

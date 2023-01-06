@@ -77,7 +77,7 @@ func transferWithSalt(c *gin.Context) {
 	}
 
 	var hash string
-	hash, err := polygon.TransferERC20(req.Mnemonic, common.HexToAddress(req.To), common.HexToAddress(req.ContractAddress), *big.NewInt(req.Amount))
+	hash, err := polygon.TransferERC20AcceptFloat(req.Mnemonic, common.HexToAddress(req.To), common.HexToAddress(req.ContractAddress), req.Amount)
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
 		logo.Errorf("failed to tranfer to: %v from wallet: %v , network: %v, contractAddr: %v , error: %s", req.To, req.WalletAddress, network, req.ContractAddress, err)
