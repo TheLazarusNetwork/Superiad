@@ -67,8 +67,8 @@ func nativeCheckBalanceWithSalt(c *gin.Context) {
 	}
 	network := "matic"
 
-	var balance *big.Int
-	balance, err := polygon.GetBalanceFromWalletAddress(paramWalletAddress)
+	var balance *big.Float
+	balance, err := polygon.GetBalanceInDecimalsFromWalletAddress(paramWalletAddress)
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get balance").SendD(c)
 		logo.Errorf("failed to get balance from wallet of userId: %v and network: %v, error: %s", paramWalletAddress, network, err)

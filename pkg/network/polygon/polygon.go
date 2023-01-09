@@ -54,6 +54,22 @@ func GetBalanceFromWalletAddress(walletAddress string) (*big.Int, error) {
 	return bal, nil
 }
 
+func GetBalanceInDecimalsFromWalletAddress(walletAddress string) (*big.Float, error) {
+	client, err := ethclient.Dial(GetRpcUrl())
+	if err != nil {
+		return nil, fmt.Errorf("failed to dial rpc client :%w", err)
+	}
+	bal, err := client.BalanceAt(context.Background(), common.HexToAddress(walletAddress), nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to call BalanceAt :%w", err)
+	}
+
+	ether := big.NewFloat(0).SetInt(big.NewInt(1000000000000000000))
+	balanceInDecimals := big.NewFloat(0).SetInt(bal)
+	balanceInDecimals.Quo(balanceInDecimals, ether)
+	return balanceInDecimals, nil
+}
+
 func GetNetworkInfo() (*networkInfo, error) {
 	chainId, err := GetChainId()
 	if err != nil {

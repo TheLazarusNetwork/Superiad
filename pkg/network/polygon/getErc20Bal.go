@@ -49,3 +49,29 @@ func GetERC20BalanceFromWalletAddress(walletAddress common.Address, contractAddr
 		return bal, nil
 	}
 }
+
+func GetERC20BalanceInDecimalsFromWalletAddress(walletAddress common.Address, contractAddr common.Address) (*big.Float, error) {
+	client, err := ethclient.Dial(GetRpcUrl())
+	if err != nil {
+		return nil, err
+	}
+	ins, err := generc20.NewErc20(contractAddr, client)
+	if err != nil {
+		return nil, err
+	}
+	decimals, err := ins.Decimals(nil)
+	if err != nil {
+		return nil, err
+	}
+	decimalsCal := big.NewInt(0)
+	decimalsCal.Exp(big.NewInt(10), big.NewInt(int64(decimals)), nil)
+	// amount.Mul(&amount, decimalsCal)
+	bal, err := ins.BalanceOf(nil, walletAddress)
+	if err != nil {
+		return nil, err
+	}
+	token := big.NewFloat(0).SetInt(big.NewInt(decimalsCal.Int64()))
+	balanceInDecimals := big.NewFloat(0).SetInt(bal)
+	balanceInDecimals.Quo(balanceInDecimals, token)
+	return balanceInDecimals, nil
+}

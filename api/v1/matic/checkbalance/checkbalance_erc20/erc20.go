@@ -68,7 +68,7 @@ func erc20CheckBalanceSalt(c *gin.Context) {
 	}
 	network := "matic"
 
-	balance, err := polygon.GetERC20BalanceFromWalletAddress(common.HexToAddress(paramWalletAddress), common.HexToAddress(paramContractAddress))
+	balance, err := polygon.GetERC20BalanceInDecimalsFromWalletAddress(common.HexToAddress(paramWalletAddress), common.HexToAddress(paramContractAddress))
 	if err != nil {
 		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get balance").SendD(c)
 		logo.Errorf("failed to get ERC20 balance of wallet: %v , network: %v, contractAddr: %v , error: %s", paramWalletAddress, network, paramContractAddress, err)
