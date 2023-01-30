@@ -2,6 +2,7 @@ package matic
 
 import (
 	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/api/v1/matic/checkbalance"
+	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/api/v1/matic/delegatenftcreation"
 	"github.com/VirtuaTechnologies/VirtuaCoin_Wallet/api/v1/matic/transfer"
 
 	"github.com/gin-gonic/gin"
@@ -20,5 +21,6 @@ func ApplyRoutes(r *gin.RouterGroup) {
 		transfer.ApplyRoutes(v1)
 		// approve.ApplyRoutes(v1)
 		// approveall.ApplyRoutes(v1)
+		delegatenftcreation.ApplyRoutes(v1)
 	}
 }

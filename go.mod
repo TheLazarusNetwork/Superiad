@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/TheLazarusNetwork/go-helpers/httpo v0.0.0-20221007050857-09c7bf66b39e
 	github.com/TheLazarusNetwork/go-helpers/logo v0.0.0-20221006153943-716648cb2d49
-	github.com/btcsuite/btcd v0.22.0-beta.0.20220111032746-97732e52810c
+	github.com/btcsuite/btcd v0.22.1
 	github.com/btcsuite/btcd/btcutil v1.1.0
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/ethereum/go-ethereum v1.10.15
@@ -25,6 +25,7 @@ require (
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
 	github.com/VictoriaMetrics/fastcache v1.6.0 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.1.0 // indirect
+	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deckarep/golang-set v0.0.0-20180603214616-504e848d77ea // indirect
