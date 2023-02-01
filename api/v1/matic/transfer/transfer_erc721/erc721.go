@@ -66,3 +66,23 @@ func sendSuccessResponse(c *gin.Context, hash string, userId string) {
 	}
 	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
 }
+
+func transferWithSalt(c *gin.Context) {
+	network := "matic"
+	var req TransferRequestSalt
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		logo.Errorf("Invalid request body: %s", err)
+		httpo.NewErrorResponse(http.StatusBadRequest, " Invalid body").SendD(c)
+		return
+	}
+	hash, err := polygon.TransferERC721(req.Mnemonic, common.HexToAddress(req.To), common.HexToAddress(req.ContractAddress), *big.NewInt(int64(req.TokenId)))
+	if err != nil {
+		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
+		logo.Errorf("failed to tranfer to: %v from wallet: %v , network: %v, contractAddr: %v , error: %s", req.To, req.WalletAddress, network, req.ContractAddress, err)
+		return
+	}
+
+	payload := TransferPayload{TrasactionHash: hash}
+	httpo.NewSuccessResponse(http.StatusOK, "trasaction initiated", payload).SendD(c)
+}
