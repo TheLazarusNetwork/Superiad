@@ -84,5 +84,5 @@ func transferWithSalt(c *gin.Context) {
 	}
 
 	payload := TransferPayload{TrasactionHash: hash}
-	httpo.NewSuccessResponse(http.StatusOK, "trasaction initiated", payload).SendD(c)
+	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
 }
