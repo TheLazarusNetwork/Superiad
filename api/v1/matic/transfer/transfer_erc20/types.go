@@ -9,4 +9,5 @@ type TransferRequest struct {
 
 type TransferPayload struct {
 	TrasactionHash string
+	Message        string `json:"message"`
 }

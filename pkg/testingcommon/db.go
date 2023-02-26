@@ -3,8 +3,8 @@ package testingcommon
 import (
 	"fmt"
 
-	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/superiad/pkg/store"
+	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -59,12 +59,16 @@ func DeleteCreatedEntities() func() {
 				deleteValue = fmt.Sprintf("'%v'", v)
 
 			default:
-				logo.Fatal("not implemented")
+				log.WithFields(log.Fields{
+					"err": "not Implemented",
+				}).Fatal("not implemented")
 			}
 
 			q := fmt.Sprintf(`DELETE FROM %v WHERE %v=%v`, entry.table, entry.keyname, deleteValue)
 			if err := db.Exec(q).Error; err != nil {
-				logo.Warnf("failed to exec query: %s, in clean up hook, %s", q, err)
+				log.WithFields(log.Fields{
+					"err": err,
+				}).Warnf("failed to exec query: %s, in clean up hook, %s", q, err)
 			}
 		}
 

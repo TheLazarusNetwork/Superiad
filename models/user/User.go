@@ -6,7 +6,6 @@ import (
 	"github.com/TheLazarusNetwork/superiad/models/transaction"
 	"github.com/TheLazarusNetwork/superiad/pkg/store"
 	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
-	"github.com/google/uuid"
 )
 
 var (
@@ -14,27 +13,28 @@ var (
 )
 
 type User struct {
-	UserId       string                    `json:"userId" gorm:"primary_key"`
+	UserId       string                    `json:"userId" gorm:"primary_key;unique;not null"`
 	Mnemonic     string                    `json:"-" gorm:"unique;not null"`
 	Transactions []transaction.Transaction `json:"transactions" gorm:"foreignKey:UserId"`
-	IsUserLocked bool                      `json:"isUserLocked"`
+	Email        string                    `json:"email" gorm:"unique;not null"`
 }
 
-func AddUser() (string, error) {
+func AddUser(userId string, email string) error {
 	mnemonic, err := wallet.GenerateMnemonic()
 	if err != nil {
-		return "", err
+		return err
 	}
 	db := store.DB
-	userId := uuid.NewString()
+
 	newUser := User{
 		UserId:   userId,
 		Mnemonic: *mnemonic,
+		Email:    email,
 	}
 	if err := db.Model(&newUser).Create(&newUser).Error; err != nil {
-		return "", err
+		return err
 	} else {
-		return userId, nil
+		return nil
 	}
 }
 
@@ -53,18 +53,18 @@ func AddTrasactionHash(userId string, hash string) error {
 	return nil
 }
 
-func SetLockStatus(userId string, lockStatus bool) error {
-	db := store.DB
-	res := db.Model(&User{}).Where("user_id = ?", userId).Update("is_user_locked", lockStatus)
-	if err := res.Error; err != nil {
-		return err
-	}
-	if res.RowsAffected == 0 {
-		return ErrNoRecordFound
-	}
+// func SetLockStatus(userId string, lockStatus bool) error {
+// 	db := store.DB
+// 	res := db.Model(&User{}).Where("user_id = ?", userId).Update("is_user_locked", lockStatus)
+// 	if err := res.Error; err != nil {
+// 		return err
+// 	}
+// 	if res.RowsAffected == 0 {
+// 		return ErrNoRecordFound
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func GetMnemonic(userId string) (mnemonic string, err error) {
 	user, err := GetUser(userId)
@@ -75,9 +75,9 @@ func GetMnemonic(userId string) (mnemonic string, err error) {
 	}
 }
 
-func GetUser(userId string) (user User, err error) {
+func GetUser(email string) (user User, err error) {
 	db := store.DB
-	err = db.Model(&User{}).Where("user_id = ?", userId).First(&user).Error
+	err = db.Model(&User{}).Where("email = ?", email).First(&user).Error
 	if err != nil {
 		return User{}, err
 	} else {

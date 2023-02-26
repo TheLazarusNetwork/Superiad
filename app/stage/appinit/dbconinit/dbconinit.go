@@ -4,9 +4,9 @@ package dbconinit
 import (
 	"fmt"
 
-	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/superiad/config/envconfig"
 	"github.com/TheLazarusNetwork/superiad/pkg/store"
+	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -28,7 +28,9 @@ func Init() {
 		DSN: dns,
 	}))
 	if err != nil {
-		logo.Fatal("failed to connect database", err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Fatal("failed to Create database config", err)
 	}
 
 	// Store database in global store
@@ -37,11 +39,15 @@ func Init() {
 	// Get underlying sql database to ping it
 	sqlDb, err := db.DB()
 	if err != nil {
-		logo.Fatal("failed to ping database", err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Fatal("failed to Connect to database", err)
 	}
 
 	// If ping fails then log error and exit
 	if err = sqlDb.Ping(); err != nil {
-		logo.Fatal("failed to ping database", err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Fatal("failed to ping database", err)
 	}
 }

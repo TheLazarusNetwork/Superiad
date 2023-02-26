@@ -6,4 +6,5 @@ type CheckNativeBalanceRequest struct {
 
 type CheckNativeBalancePayload struct {
 	Balance string `json:"balance"`
+	Message string `json:"message"`
 }

@@ -7,4 +7,5 @@ type CheckErc721BalanceRequest struct {
 
 type CheckErc721BalancePayload struct {
 	Balance string `json:"balance"`
+	Message string `json"message"`
 }

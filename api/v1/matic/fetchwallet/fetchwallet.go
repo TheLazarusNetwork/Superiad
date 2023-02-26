@@ -4,13 +4,12 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/TheLazarusNetwork/go-helpers/httpo"
-	"github.com/TheLazarusNetwork/go-helpers/logo"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/TheLazarusNetwork/superiad/models/user"
 	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
-	"gorm.io/gorm"
-
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // ApplyRoutes applies router to gin Router
@@ -25,31 +24,36 @@ func ApplyRoutes(r *gin.RouterGroup) {
 func fetchwallet(c *gin.Context) {
 	paramUserId := c.Param("userId")
 	if len(paramUserId) <= 0 {
-		httpo.NewErrorResponse(http.StatusBadRequest, "userId is required in /fetchwallet/:userId").SendD(c)
+		c.JSON(http.StatusBadRequest, "userId is required in /fetchwallet/:userId")
 		return
 	}
 
 	mnemonic, err := user.GetMnemonic(paramUserId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+			c.JSON(http.StatusNotFound, "user not found")
 			return
 		}
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logo.Errorf("failed to fetch user mnemonic, error: %s", err)
+		c.JSON(http.StatusInternalServerError, "failed to fetch user")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to fetch user mnemonic")
 		return
 	}
 
 	walletAddr, err := polygon.GetWalletAddres(mnemonic)
 	if err != nil {
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get wallet address").SendD(c)
-		logo.Errorf("failed to get wallet address for userId: %v", paramUserId)
+		c.JSON(http.StatusInternalServerError, "failed to get wallet address")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to get wallet address for userId: %v", paramUserId)
 		return
 	}
 
 	payload := FetchWalletPayload{
 		WalletAddress: walletAddr,
+		Message:       "wallet address fetched",
 	}
-	httpo.NewSuccessResponse(200, "wallet address fetched", payload).SendD(c)
+	c.JSON(200, payload)
 
 }

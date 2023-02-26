@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/TheLazarusNetwork/go-helpers/httpo"
-	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/superiad/models/user"
 	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
+	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -27,33 +26,37 @@ func verifySignature(c *gin.Context) {
 	var req VerifyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		err := fmt.Errorf("body is invalid: %w", err)
-		httpo.NewErrorResponse(http.StatusBadRequest, err.Error()).SendD(c)
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 	mnemonic, err := user.GetMnemonic(req.UserId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+			c.JSON(http.StatusNotFound, "user not found")
 			return
 		}
 
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logo.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
-			req.UserId, err)
+		c.JSON(http.StatusInternalServerError, "failed to fetch user")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to fetch user mnemonic for userId: %v",
+			req.UserId)
 		return
 	}
 
 	res, err := polygon.VerifySignature(mnemonic, req.Message, req.Signature)
 	if err != nil {
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to verify signature").SendD(c)
-		logo.Errorf("failed to verify signature from wallet of userId: %v and network: %v, error: %s",
-			req.UserId, network, err)
+		c.JSON(http.StatusInternalServerError, "failed to verify signature")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to verify signature from wallet of userId: %v and network: %v",
+			req.UserId, network)
 		return
 	}
 
 	if !res {
-		httpo.NewErrorResponse(httpo.SignatureDenied, "signature is invalid").Send(c, 403)
+		c.JSON(401, "signature is invalid")
 		return
 	}
-	httpo.NewSuccessResponse(200, "signature is valid", nil).SendD(c)
+	c.JSON(200, "signature is valid")
 }

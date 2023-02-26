@@ -6,7 +6,6 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/consensus/misc"
@@ -14,37 +13,48 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/params"
+	log "github.com/sirupsen/logrus"
 )
 
 func SendRawTrasac(privateKey *ecdsa.PrivateKey, client ethclient.Client, chainId int64, gas uint64, contractAddress common.Address, abiS string, method string, args ...interface{}) (*types.Transaction, error) {
 
 	abiP, err := abi.JSON(strings.NewReader(abiS))
 	if err != nil {
-		logo.Errorf("failed to parse JSON abi, error %s", err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to parse JSON abi")
 		return nil, err
 	}
 
 	nonce, err := client.PendingNonceAt(context.Background(), crypto.PubkeyToAddress(privateKey.PublicKey))
 	if err != nil {
-		logo.Warnf("failed to get nonce")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Warnf("failed to get nonce")
 		return nil, err
 	}
 
 	chainID, err := client.NetworkID(context.Background())
 	if err != nil {
-		logo.Errorf("failed to call client.NetworkID, error: %s", err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to call client.NetworkID")
 		return nil, err
 	}
 
 	bytesData, err := abiP.Pack(method, args...)
 	if err != nil {
-		logo.Errorf("failed to pack trasaction of method %v, error: %s", method, err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to pack trasaction of method %v", method)
 		return nil, err
 	}
 
 	maxPriorityFeePerGas, err := client.SuggestGasTipCap(context.Background())
 	if err != nil {
-		logo.Errorf("failed to suggestGasTipCap, error %s", err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to suggestGasTipCap")
 		return nil, err
 	}
 	config := &params.ChainConfig{
@@ -69,13 +79,17 @@ func SendRawTrasac(privateKey *ecdsa.PrivateKey, client ethclient.Client, chainI
 	})
 	signedTx, err := types.SignTx(tx, types.NewLondonSigner(chainID), privateKey)
 	if err != nil {
-		logo.Errorf("failed to sign trasaction %v, error: %s", tx, err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to sign trasaction %v, error: %s", tx, err)
 		return nil, err
 	}
 
 	err = client.SendTransaction(context.TODO(), signedTx)
 	if err != nil {
-		logo.Error("failed to send trasaction, error: ", err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to send trasaction")
 		return nil, err
 	}
 	return signedTx, nil

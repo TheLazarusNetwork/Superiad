@@ -1,15 +1,53 @@
 package auth
 
 import (
-	"github.com/golang-jwt/jwt/v4"
+	"encoding/json"
+	"os"
+	"strconv"
+	"time"
+
+	gopaseto "aidanwoods.dev/go-paseto"
+	"github.com/TheLazarusNetwork/superiad/config/envconfig"
+	"github.com/TheLazarusNetwork/superiad/pkg/claims"
+	log "github.com/sirupsen/logrus"
 )
 
-func GenerateToken(claims jwt.Claims, privateKey string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
-	tokenString, err := token.SignedString([]byte(privateKey))
+var PublicKey gopaseto.V4AsymmetricPublicKey
+var secretKey gopaseto.V4AsymmetricSecretKey
 
+func Init() {
+	secretKey = gopaseto.NewV4AsymmetricSecretKey()
+	PublicKey = secretKey.Public()
+}
+
+func GenerateTokenPaseto(claim claims.CustomClaims) (string, error) {
+	footer := envconfig.EnvVars.FOOTER
+	claimbyte, _ := json.Marshal(claim)
+	token, err := gopaseto.NewTokenFromClaimsJSON(claimbyte, []byte(footer))
 	if err != nil {
 		return "", err
 	}
-	return tokenString, nil
+	pasetoExpirationInHours, ok := os.LookupEnv("PASETO_EXPIRATION_IN_HOURS")
+	pasetoExpirationInHoursInt := time.Duration(24)
+	if ok {
+		res, err := strconv.Atoi(pasetoExpirationInHours)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"err": err,
+			}).Error("failed to bind")
+
+		} else {
+			pasetoExpirationInHoursInt = time.Duration(res)
+		}
+	}
+	pasetoExpirationHours := pasetoExpirationInHoursInt * time.Hour
+	expiration := time.Now().Add(pasetoExpirationHours)
+	token.SetExpiration(expiration)
+	signed := token.V4Sign(secretKey, nil)
+	return signed, nil
+}
+
+func Getpublickey() gopaseto.V4AsymmetricPublicKey {
+	publickey := PublicKey
+	return publickey
 }

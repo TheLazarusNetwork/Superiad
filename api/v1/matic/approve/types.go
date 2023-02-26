@@ -9,4 +9,5 @@ type ApproveRequest struct {
 
 type TransferPayload struct {
 	TrasactionHash string
+	Message        string
 }

@@ -5,14 +5,12 @@ import (
 	"math/big"
 	"net/http"
 
-	"github.com/TheLazarusNetwork/go-helpers/httpo"
-	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/superiad/models/user"
 	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
-	"gorm.io/gorm"
-
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 // ApplyRoutes applies router to gin Router
@@ -28,41 +26,49 @@ func transfer(c *gin.Context) {
 	network := "matic"
 	var req TransferRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		logo.Errorf("invalid request %s", err)
-		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("Invalid Request")
+		c.JSON(http.StatusBadRequest, "body is invalid")
 		return
 	}
 	mnemonic, err := user.GetMnemonic(req.UserId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+			c.JSON(http.StatusNotFound, "user not found")
 
 			return
 		}
 
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logo.Errorf("failed to fetch user mnemonic for userId: %v, error: %s",
-			req.UserId, err)
+		c.JSON(http.StatusInternalServerError, "failed to fetch user")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to fetch user mnemonic for userId: %v", req.UserId)
 		return
 	}
 
 	var hash string
 	hash, err = polygon.TransferERC20(mnemonic, common.HexToAddress(req.To), common.HexToAddress(req.ContractAddress), *big.NewInt(req.Amount))
 	if err != nil {
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to tranfer").SendD(c)
-		logo.Errorf("failed to tranfer to: %v from wallet of userId: %v , network: %v, contractAddr: %v , error: %s", req.To,
-			req.UserId, network, req.ContractAddress, err)
+		c.JSON(http.StatusInternalServerError, "failed to tranfer")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to tranfer to: %v from wallet of userId: %v , network: %v, contractAddr: %v ", req.To,
+			req.UserId, network, req.ContractAddress)
 		return
 	}
-	sendSuccessResponse(c, hash, req.UserId)
+	SendSuccessResponse(c, hash, req.UserId)
 }
 
-func sendSuccessResponse(c *gin.Context, hash string, userId string) {
+func SendSuccessResponse(c *gin.Context, hash string, userId string) {
 	payload := TransferPayload{
 		TrasactionHash: hash,
+		Message:        "trasaction initiated",
 	}
 	if err := user.AddTrasactionHash(userId, hash); err != nil {
-		logo.Errorf("failed to add transaction hash: %v to user id: %v, error: %s", hash, userId, err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to add transaction hash: %v to user id: %v", hash, userId)
 	}
-	httpo.NewSuccessResponse(200, "trasaction initiated", payload).SendD(c)
+	c.JSON(200, payload)
 }

@@ -8,4 +8,5 @@ type IsOwnerRequest struct {
 
 type IsOwnerPayload struct {
 	IsOwner bool `json:"isOwner" binding:"required"`
+	Message string `json:"message"`
 }

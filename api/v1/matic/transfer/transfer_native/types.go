@@ -6,6 +6,3 @@ type TransferRequest struct {
 	Amount int64  `json:"amount" binding:"required"`
 }
 
-type TransferPayload struct {
-	TrasactionHash string
-}

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/superiad/api"
 	"github.com/TheLazarusNetwork/superiad/config/envconfig"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 func Run() {
@@ -25,6 +25,8 @@ func Run() {
 	port := envconfig.EnvVars.APP_PORT
 	err := ginApp.Run(fmt.Sprintf(":%d", port))
 	if err != nil {
-		logo.Fatalf("failed to serve app on port %d: %s", port, err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Fatalf("failed to serve app on port %d: %s", port, err)
 	}
 }

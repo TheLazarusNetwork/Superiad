@@ -5,14 +5,12 @@ import (
 	"math/big"
 	"net/http"
 
-	"github.com/TheLazarusNetwork/go-helpers/httpo"
-	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/superiad/models/user"
 	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
-	"gorm.io/gorm"
-
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 // ApplyRoutes applies router to gin Router
@@ -28,8 +26,7 @@ func erc721CheckBalance(c *gin.Context) {
 	var req CheckErc721BalanceRequest
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
-
+		c.JSON(http.StatusBadRequest, "body is invalid")
 		return
 	}
 	network := "matic"
@@ -37,26 +34,31 @@ func erc721CheckBalance(c *gin.Context) {
 	mnemonic, err := user.GetMnemonic(req.UserId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+			c.JSON(http.StatusNotFound, "user not found")
 
 			return
 		}
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logo.Errorf("failed to fetch user with id %v, err %s", req.UserId, err)
+		c.JSON(http.StatusInternalServerError, "failed to fetch user")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to fetch user with id %v", req.UserId)
 		return
 	}
 	var balance *big.Int
 
 	balance, err = polygon.GetERC721Balance(mnemonic, common.HexToAddress(req.ContractAddr))
 	if err != nil {
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to get ERC721 balance").SendD(c)
-		logo.Errorf("failed to get ERC721 balance of wallet of userId: %v , network: %v, contractAddr: %v , error: %s", req.UserId,
-			network, req.ContractAddr, err)
+		c.JSON(http.StatusInternalServerError, "failed to get ERC721 balance")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to get ERC721 balance of wallet of userId: %v , network: %v, contractAddr: %v", req.UserId,
+			network, req.ContractAddr)
 		return
 	}
 
 	payload := CheckErc721BalancePayload{
 		Balance: balance.String(),
+		Message: "balance successfully fetched",
 	}
-	httpo.NewSuccessResponse(200, "balance successfully fetched", payload).SendD(c)
+	c.JSON(200, payload)
 }

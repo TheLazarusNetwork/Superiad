@@ -4,7 +4,6 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/consensus/misc"
@@ -12,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/params"
+	log "github.com/sirupsen/logrus"
 )
 
 func Transfer(mnemonic string, to common.Address, value big.Int) (string, error) {
@@ -32,7 +32,9 @@ func Transfer(mnemonic string, to common.Address, value big.Int) (string, error)
 
 	maxPriorityFeePerGas, err := client.SuggestGasTipCap(context.Background())
 	if err != nil {
-		logo.Errorf("failed to suggestGasTipCap, error %s", err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to suggestGasTipCap")
 		return "", err
 	}
 	chainId, err := GetChainId()

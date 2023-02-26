@@ -7,4 +7,5 @@ type SignMessageRequest struct {
 
 type SignMessagePayload struct {
 	Signature string `json:"signature"`
+	Message string `json:"message"`
 }

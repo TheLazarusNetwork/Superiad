@@ -5,14 +5,12 @@ import (
 	"math/big"
 	"net/http"
 
-	"github.com/TheLazarusNetwork/go-helpers/httpo"
-	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/superiad/models/user"
 	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
-	"gorm.io/gorm"
-
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 // ApplyRoutes applies router to gin Router
@@ -28,32 +26,37 @@ func isowner(c *gin.Context) {
 	var req IsOwnerRequest
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		httpo.NewErrorResponse(http.StatusBadRequest, "body is invalid").SendD(c)
+		c.JSON(http.StatusBadRequest, "body is invalid")
 
 		return
 	}
 	mnemonic, err := user.GetMnemonic(req.UserId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			httpo.NewErrorResponse(httpo.UserNotFound, "user not found").Send(c, 404)
+			c.JSON(http.StatusNotFound, "user not found")
 
 			return
 		}
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to fetch user").SendD(c)
-		logo.Errorf("failed to fetch user with id %v, err %s", req.UserId, err)
+		c.JSON(http.StatusInternalServerError, "failed to fetch user")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to fetch user with id %v", req.UserId)
 		return
 	}
 
 	isOwner, err := polygon.ERC721IsOwner(mnemonic, common.HexToAddress(req.ContractAddress), big.NewInt(req.TokenId))
 
 	if err != nil {
-		httpo.NewErrorResponse(http.StatusInternalServerError, "failed to call ERC721IsOwner").SendD(c)
-		logo.Errorf("failed to call ERC721IsOwner for user with id %v,erc721Address %v,tokenId %v, err %s", req.UserId, req.ContractAddress, req.TokenId, err)
+		c.JSON(http.StatusInternalServerError, "failed to call ERC721IsOwner")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("failed to call ERC721IsOwner for user with id %v,erc721Address %v,tokenId %v", req.UserId, req.ContractAddress, req.TokenId)
 		return
 	}
 	payload := IsOwnerPayload{
 		IsOwner: isOwner,
+		Message: "Result success",
 	}
-	httpo.NewSuccessResponse(200, "Result success", payload).SendD(c)
+	c.JSON(200, payload)
 
 }

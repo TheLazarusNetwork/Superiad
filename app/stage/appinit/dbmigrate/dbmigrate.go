@@ -2,16 +2,18 @@
 package dbmigrate
 
 import (
-	"github.com/TheLazarusNetwork/go-helpers/logo"
 	"github.com/TheLazarusNetwork/superiad/models/transaction"
 	"github.com/TheLazarusNetwork/superiad/models/user"
 	"github.com/TheLazarusNetwork/superiad/pkg/store"
+	log "github.com/sirupsen/logrus"
 )
 
 func Migrate() {
 	db := store.DB
 	err := db.AutoMigrate(&user.User{}, &transaction.Transaction{})
 	if err != nil {
-		logo.Fatalf("failed to migrate models into database: %s", err)
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Fatal("failed to migrate models into database: %s", err)
 	}
 }

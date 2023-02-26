@@ -7,7 +7,3 @@ type TransferRequest struct {
 	ContractAddress string `json:"contractAddress" binding:"required"`
 	TokenId         int64  `json:"tokenId" binding:"required"`
 }
-
-type TransferPayload struct {
-	TrasactionHash string
-}
