@@ -2,11 +2,13 @@ package ethereum
 
 import (
 	"context"
-	"github.com/TheLazarusNetwork/superiad/config/envconfig"
-	"github.com/TheLazarusNetwork/superiad/generated/generc20"
-	"github.com/TheLazarusNetwork/superiad/generated/generc721"
-	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
-	rawtrasaction "github.com/TheLazarusNetwork/superiad/pkg/wallet/rawtransaction"
+	"math/big"
+
+	"github.com/MyriadFlow/superiad/config/envconfig"
+	"github.com/MyriadFlow/superiad/generated/generc20"
+	"github.com/MyriadFlow/superiad/generated/generc721"
+	"github.com/MyriadFlow/superiad/pkg/wallet"
+	rawtrasaction "github.com/MyriadFlow/superiad/pkg/wallet/rawtransaction"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/consensus/misc"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -14,7 +16,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/params"
 	log "github.com/sirupsen/logrus"
-	"math/big"
 )
 
 func GetChainId() (int, error) {

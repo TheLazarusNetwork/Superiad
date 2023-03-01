@@ -21,11 +21,10 @@ type config struct {
 	NETWORK_RPC_URL_POLYGON    string   `env:"NETWORK_RPC_URL_POLYGON,notEmpty"`
 	TOKEN                      string   `env:"TOKEN,notEmpty"`
 	APP_ENVIRONMENT            string   `env:"APP_ENVIRONMENT,notEmpty"`
-	HOSTNAME                   string   `env:"HOSTNAME"`
 	PASETO_EXPIRATION_IN_HOURS string   `env:"PASETO_EXPIRATION_IN_HOURS,required" `
 	SUPABASEKEY                string   `env:"SUPABASEKEY,required"`
 	SUPABASEURL                string   `env:"SUPABASEURL,required"`
-	FOOTER                     string   `env:"FOOTER,required"`
+	FOOTER                     string   `env:"PASETO_FOOTER,required"`
 }
 
 var EnvVars config = config{}

@@ -1,15 +1,15 @@
 package matic
 
 import (
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/approve"
-	approveall "github.com/TheLazarusNetwork/superiad/api/v1/matic/approveAll"
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/checkbalance"
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/fetchwallet"
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/isowner"
-	signmessage "github.com/TheLazarusNetwork/superiad/api/v1/matic/signMessage"
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/transfer"
-	verifysignature "github.com/TheLazarusNetwork/superiad/api/v1/matic/verifySignature"
-	"github.com/TheLazarusNetwork/superiad/pkg/paseto"
+	"github.com/MyriadFlow/superiad/api/v1/matic/approve"
+	approveall "github.com/MyriadFlow/superiad/api/v1/matic/approveAll"
+	"github.com/MyriadFlow/superiad/api/v1/matic/checkbalance"
+	"github.com/MyriadFlow/superiad/api/v1/matic/fetchwallet"
+	"github.com/MyriadFlow/superiad/api/v1/matic/isowner"
+	signmessage "github.com/MyriadFlow/superiad/api/v1/matic/signMessage"
+	"github.com/MyriadFlow/superiad/api/v1/matic/transfer"
+	verifysignature "github.com/MyriadFlow/superiad/api/v1/matic/verifySignature"
+	"github.com/MyriadFlow/superiad/pkg/paseto"
 
 	"github.com/gin-gonic/gin"
 )

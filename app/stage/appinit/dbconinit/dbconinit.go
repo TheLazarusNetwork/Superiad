@@ -4,8 +4,8 @@ package dbconinit
 import (
 	"fmt"
 
-	"github.com/TheLazarusNetwork/superiad/config/envconfig"
-	"github.com/TheLazarusNetwork/superiad/pkg/store"
+	"github.com/MyriadFlow/superiad/config/envconfig"
+	"github.com/MyriadFlow/superiad/pkg/store"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

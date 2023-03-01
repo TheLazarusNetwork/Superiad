@@ -7,12 +7,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/TheLazarusNetwork/superiad/app/stage/appinit"
-	"github.com/TheLazarusNetwork/superiad/config/envconfig"
+	"github.com/MyriadFlow/superiad/app/stage/appinit"
+	"github.com/MyriadFlow/superiad/config/envconfig"
 
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/store"
-	"github.com/TheLazarusNetwork/superiad/pkg/testingcommon"
+	"github.com/MyriadFlow/superiad/models/user"
+	"github.com/MyriadFlow/superiad/pkg/store"
+	"github.com/MyriadFlow/superiad/pkg/testingcommon"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )

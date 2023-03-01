@@ -6,8 +6,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
+	"github.com/MyriadFlow/superiad/models/user"
+	"github.com/MyriadFlow/superiad/pkg/network/polygon"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

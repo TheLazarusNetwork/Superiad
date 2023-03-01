@@ -1,14 +1,13 @@
-package register
+package auth
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
-	"github.com/TheLazarusNetwork/superiad/config/envconfig"
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/auth"
-	"github.com/TheLazarusNetwork/superiad/pkg/claims"
+	"github.com/MyriadFlow/superiad/config/envconfig"
+	"github.com/MyriadFlow/superiad/models/user"
+	"github.com/MyriadFlow/superiad/pkg/auth"
+	"github.com/MyriadFlow/superiad/pkg/claims"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	supa "github.com/nedpals/supabase-go"
@@ -23,9 +22,9 @@ type GenericAuthHeaders struct {
 
 // ApplyRoutes applies router to gin Router
 func ApplyRoutes(r *gin.RouterGroup) {
-	g := r.Group("/register")
+	g := r.Group("/auth")
 	{
-		g.GET("/", register)
+		g.POST("/", authReq)
 	}
 }
 func Init() {
@@ -34,7 +33,7 @@ func Init() {
 	supabaseClient = supa.CreateClient(supabaseUrl, supabaseKey)
 }
 
-func register(c *gin.Context) {
+func authReq(c *gin.Context) {
 	var headers GenericAuthHeaders
 	var claimsvalue claims.CustomClaims
 	var payload AuthenticatePayload
@@ -48,27 +47,40 @@ func register(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	if headers.Authorization == "" {
+	var reqBody AuthenticateReq
+	err = c.ShouldBindJSON(&reqBody)
+	if err != nil || reqBody.Type != "Supabase" {
 		log.WithFields(log.Fields{
 			"err": err,
-		}).Error("Autherisation header is missing")
-		c.Abort()
+		}).Error("Unable to Decode Request Body")
+		errResponse := ErrAuthenticate("Unable to Decode Request Body")
+		c.JSON(http.StatusInternalServerError, errResponse)
 		return
 	}
-	supabase_jwt_token := c.Request.Header.Get("SUPAJWT_TOKEN")
+	supabase_jwt_token := c.Request.Header.Get("TOKEN")
 	ctx := context.Background()
 	supabaseUser, err := supabaseClient.Auth.User(ctx, supabase_jwt_token)
 	if err != nil {
-		fmt.Println("err value", err.Error())
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Error("Unable to Authenticate Token")
+
+		c.JSON(http.StatusInternalServerError, "unable to authenticate ")
+		return
 	}
 	claimsvalue.Email = supabaseUser.Email
-	// insert into db or check for uuid if present return the paseto token
+
 	userDetails, err := user.GetUser(claimsvalue.Email)
 	if err != nil {
 		claimsvalue.UUID = uuid.NewString()
 		err = user.AddUser(claimsvalue.UUID, claimsvalue.Email)
 		if err != nil {
-			//log unable to add user
+			log.WithFields(log.Fields{
+				"err": err,
+			}).Error("Unable to Add User ")
+			errResponse := ErrAuthenticate(err.Error())
+			c.JSON(http.StatusInternalServerError, errResponse)
+			return
 		}
 	}
 	claimsvalue.UUID = userDetails.UserId

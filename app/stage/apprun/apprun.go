@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/TheLazarusNetwork/superiad/api"
-	"github.com/TheLazarusNetwork/superiad/config/envconfig"
+	"github.com/MyriadFlow/superiad/api"
+	"github.com/MyriadFlow/superiad/config/envconfig"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"

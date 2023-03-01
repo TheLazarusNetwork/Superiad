@@ -2,9 +2,9 @@
 package dbmigrate
 
 import (
-	"github.com/TheLazarusNetwork/superiad/models/transaction"
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/store"
+	"github.com/MyriadFlow/superiad/models/transaction"
+	"github.com/MyriadFlow/superiad/models/user"
+	"github.com/MyriadFlow/superiad/pkg/store"
 	log "github.com/sirupsen/logrus"
 )
 

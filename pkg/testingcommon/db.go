@@ -3,7 +3,7 @@ package testingcommon
 import (
 	"fmt"
 
-	"github.com/TheLazarusNetwork/superiad/pkg/store"
+	"github.com/MyriadFlow/superiad/pkg/store"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )

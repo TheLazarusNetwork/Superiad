@@ -7,8 +7,8 @@ import (
 	"time"
 
 	gopaseto "aidanwoods.dev/go-paseto"
-	"github.com/TheLazarusNetwork/superiad/config/envconfig"
-	"github.com/TheLazarusNetwork/superiad/pkg/claims"
+	"github.com/MyriadFlow/superiad/config/envconfig"
+	"github.com/MyriadFlow/superiad/pkg/claims"
 	log "github.com/sirupsen/logrus"
 )
 

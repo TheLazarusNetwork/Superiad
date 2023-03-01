@@ -1,8 +1,8 @@
 package apiv1
 
 import (
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic"
-	"github.com/TheLazarusNetwork/superiad/api/v1/register"
+	"github.com/MyriadFlow/superiad/api/v1/auth"
+	"github.com/MyriadFlow/superiad/api/v1/matic"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,7 +10,7 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	v1 := r.Group("/v1.0")
 	{
-		register.ApplyRoutes(v1)
+		auth.ApplyRoutes(v1)
 		matic.ApplyRoutes(v1)
 	}
 }

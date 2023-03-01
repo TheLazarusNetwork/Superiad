@@ -4,7 +4,7 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
+	"github.com/MyriadFlow/superiad/pkg/wallet"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/consensus/misc"
 	"github.com/ethereum/go-ethereum/core/types"

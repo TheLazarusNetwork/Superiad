@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
+	"github.com/MyriadFlow/superiad/pkg/wallet"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 )

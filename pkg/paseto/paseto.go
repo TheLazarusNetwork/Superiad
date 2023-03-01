@@ -7,11 +7,10 @@ import (
 	"strings"
 
 	gopaseto "aidanwoods.dev/go-paseto"
-	log "github.com/sirupsen/logrus"
-
-	"github.com/TheLazarusNetwork/superiad/pkg/auth"
-	"github.com/TheLazarusNetwork/superiad/pkg/claims"
+	"github.com/MyriadFlow/superiad/pkg/auth"
+	"github.com/MyriadFlow/superiad/pkg/claims"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 var (

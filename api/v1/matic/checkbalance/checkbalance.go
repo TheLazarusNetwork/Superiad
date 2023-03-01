@@ -1,9 +1,9 @@
 package checkbalance
 
 import (
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/checkbalance/checkbalance_erc20"
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/checkbalance/checkbalance_erc721"
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/checkbalance/checkbalance_native"
+	"github.com/MyriadFlow/superiad/api/v1/matic/checkbalance/checkbalance_erc20"
+	"github.com/MyriadFlow/superiad/api/v1/matic/checkbalance/checkbalance_erc721"
+	"github.com/MyriadFlow/superiad/api/v1/matic/checkbalance/checkbalance_native"
 
 	"github.com/gin-gonic/gin"
 )

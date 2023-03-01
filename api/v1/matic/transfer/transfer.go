@@ -1,9 +1,9 @@
 package transfer
 
 import (
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/transfer/transfer_erc20"
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/transfer/transfer_erc721"
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/transfer/transfer_native"
+	"github.com/MyriadFlow/superiad/api/v1/matic/transfer/transfer_erc20"
+	"github.com/MyriadFlow/superiad/api/v1/matic/transfer/transfer_erc721"
+	"github.com/MyriadFlow/superiad/api/v1/matic/transfer/transfer_native"
 
 	"github.com/gin-gonic/gin"
 )

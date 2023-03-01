@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	gopaseto "aidanwoods.dev/go-paseto"
-	"github.com/TheLazarusNetwork/superiad/pkg/auth"
-	"github.com/TheLazarusNetwork/superiad/pkg/claims"
+	"github.com/MyriadFlow/superiad/pkg/auth"
+	"github.com/MyriadFlow/superiad/pkg/claims"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"

@@ -3,8 +3,8 @@ package polygon
 import (
 	"math/big"
 
-	"github.com/TheLazarusNetwork/superiad/generated/generc20"
-	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
+	"github.com/MyriadFlow/superiad/generated/generc20"
+	"github.com/MyriadFlow/superiad/pkg/wallet"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"

@@ -3,9 +3,9 @@ package user
 import (
 	"errors"
 
-	"github.com/TheLazarusNetwork/superiad/models/transaction"
-	"github.com/TheLazarusNetwork/superiad/pkg/store"
-	"github.com/TheLazarusNetwork/superiad/pkg/wallet"
+	"github.com/MyriadFlow/superiad/models/transaction"
+	"github.com/MyriadFlow/superiad/pkg/store"
+	"github.com/MyriadFlow/superiad/pkg/wallet"
 )
 
 var (

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/TheLazarusNetwork/superiad/api/v1/matic/approve"
-	"github.com/TheLazarusNetwork/superiad/models/user"
-	"github.com/TheLazarusNetwork/superiad/pkg/network/polygon"
+	"github.com/MyriadFlow/superiad/api/v1/matic/approve"
+	"github.com/MyriadFlow/superiad/models/user"
+	"github.com/MyriadFlow/superiad/pkg/network/polygon"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"

@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/TheLazarusNetwork/superiad/app/stage/appinit"
-	"github.com/TheLazarusNetwork/superiad/app/stage/apprun"
+	"github.com/MyriadFlow/superiad/app/stage/appinit"
+	"github.com/MyriadFlow/superiad/app/stage/apprun"
 
 	"github.com/gin-gonic/gin"
 )
